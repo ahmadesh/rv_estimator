@@ -1,0 +1,944 @@
+# VRP (Variance Risk Premium) Trading Universe
+#
+# ETFs only. Single-stock VRP is intentionally excluded from this file —
+# stocks need additional filters (earnings buffer, sector exposure, market cap)
+# and the cross-strategy results channel (lucaspm98, Feb 2026) showed that
+# sector-correlated single-name VRP can produce a 7% drawdown in a single day.
+# Stick to ETFs for the production universe; add single-name handling later
+# behind a separate selector.
+#
+# CORRELATION GROUPS
+# ------------------
+# Within a group, tickers move together — usually because they wrap the same
+# underlying exposure with different leverage, the same sector, or the same
+# macro driver. Production rule: at most ONE concurrent open VRP position per
+# group. (See vrp/strategy_summary.md §5: "Same-ticker stacking — Avoid;
+# secretblaze007: I wouldn't even throw multiple VRPs on correlated tickers.")
+#
+# Sources for descriptions: official issuer pages (iShares, ProShares,
+# Direxion, Volatility Shares, KraneShares, REX, State Street) cross-checked
+# against etfdb.com / etf.com / Morningstar.
+
+groups:
+
+  # =====================================================================
+  # 1. US LARGE-CAP EQUITY (incl. developed international)
+  # Broad US large-cap index ETFs (SPY/QQQ correlation ~0.9+) plus
+  # EAFE (EFA ↔ SPY ~0.75-0.85 via global risk-on/risk-off; FX
+  # overlay doesn't separate the cluster enough for a distinct VRP
+  # slot).
+  # =====================================================================
+  - name: us_large_cap_equity
+    rationale: >
+      Broad US large-cap index ETFs plus developed-international equity
+      (EFA). Daily-return correlation ~0.75-0.95+; same global
+      risk-on/risk-off macro driver. Pick one per book.
+    tickers:
+      - symbol: SPY
+        issuer: State Street (SPDR)
+        name: SPDR S&P 500 ETF Trust
+        description: >
+          Tracks the S&P 500 — 500 largest US large-cap stocks. The most
+          liquid options market in the world; reference benchmark for the
+          whole platform's regime overlay (SPY backwardation = global
+          short-vol cut signal per §4 of the strategy summary).
+      - symbol: QQQ
+        issuer: Invesco
+        name: Invesco QQQ Trust
+        description: >
+          Tracks the Nasdaq-100 — 100 largest non-financial Nasdaq names,
+          tech-heavy (Apple, Microsoft, Nvidia, etc.). Higher implied vol
+          than SPY due to tech concentration; deeper option liquidity than
+          most sector ETFs.
+      - symbol: VOO
+        issuer: Vanguard
+        name: Vanguard S&P 500 ETF
+        description: >
+          Tracks the S&P 500 — same underlying basket as SPY/IVV. Largest
+          ETF in the world by AUM (~$935B as of May 2026). Low expense
+          ratio (0.03%) but option chain is materially less liquid than
+          SPY; for VRP execution, prefer SPY unless the SPY chain is
+          unavailable or specifically flagged.
+      - symbol: IVV
+        issuer: iShares (BlackRock)
+        name: iShares Core S&P 500 ETF
+        description: >
+          Tracks the S&P 500 — same exposure as SPY/VOO (~$805B AUM).
+          Marginally cheaper than SPY (0.03% vs 0.0945%) but option
+          liquidity is again much thinner than SPY. Holdings carbon-copy
+          of SPY for VRP-correlation purposes.
+      - symbol: VTI
+        issuer: Vanguard
+        name: Vanguard Total Stock Market ETF
+        description: >
+          Tracks the CRSP US Total Market Index — ~3,500+ US stocks
+          spanning large/mid/small cap. Broader than S&P 500 but
+          dominated by large-caps so daily-return correlation to SPY is
+          ~0.99. Option chain exists but is thin for VRP.
+      - symbol: DIA
+        issuer: State Street (SPDR)
+        name: SPDR Dow Jones Industrial Average ETF Trust
+        description: >
+          Tracks the Dow 30 — price-weighted index of 30 US blue chips.
+          Different sector mix from SPY (heavy industrials/financials,
+          lighter on tech) but daily-return correlation to SPY is still
+          ~0.95+. Among the more option-liquid alternatives in this
+          group; modest VRP edge in calmer regimes.
+      - symbol: IWB
+        issuer: iShares (BlackRock)
+        name: iShares Russell 1000 ETF
+        description: >
+          Tracks the Russell 1000 — 1,000 largest US stocks (~93% of US
+          investable market cap). Effectively a slightly broader SPY;
+          ~0.99 correlation to SPY. Option chain is thin — listed for
+          completeness, not as a primary VRP vehicle.
+      - symbol: RSP
+        issuer: Invesco
+        name: Invesco S&P 500 Equal Weight ETF
+        description: >
+          Same 500 names as SPY but equal-weighted (~0.2% per name) vs
+          cap-weighted. Less mega-cap concentration → different IV and
+          realized-vol surface in regimes where mega-caps drive
+          dispersion. Daily-return correlation to SPY ~0.95+ in normal
+          regimes, lower when mega-cap dispersion is high. Option chain
+          is moderately liquid.
+      - symbol: MAGS
+        issuer: Roundhill
+        name: Roundhill Magnificent Seven ETF
+        description: >
+          Concentrated basket of the "Magnificent 7" mega-cap tech names
+          (Apple, Microsoft, Alphabet, Amazon, Nvidia, Meta, Tesla).
+          Daily-return correlation to QQQ ~0.95+; effectively a
+          higher-beta QQQ. Higher IV than QQQ due to concentration.
+          Decent option liquidity for a young thematic ETF.
+      - symbol: EFA
+        issuer: iShares (BlackRock)
+        name: iShares MSCI EAFE ETF
+        description: >
+          Broad developed-market equity ex-US/Canada — Europe + Japan
+          + Australia, ~800 holdings. ~$50B AUM. Most option-liquid
+          DM ex-US ETF. FX-unhedged so EUR/JPY moves layer on top of
+          equity moves; IV reflects both equity and FX vol. Daily
+          correlation to SPY ~0.75-0.85 via global risk-on/risk-off —
+          shared cluster despite the geography difference.
+
+  # =====================================================================
+  # 2. US SMALL-CAP EQUITY INDEX
+  # IWM is structurally different from SPY/QQQ (sector mix, leverage,
+  # rate sensitivity) — separate group.
+  # =====================================================================
+  - name: us_small_cap_equity
+    rationale: >
+      US small-caps run a different beta to rates and credit than large
+      caps. Worth holding a slot independent of SPY/QQQ.
+    tickers:
+      - symbol: IWM
+        issuer: iShares (BlackRock)
+        name: iShares Russell 2000 ETF
+        description: >
+          Tracks the Russell 2000 — ~2,000 US small-cap stocks. More
+          rate-sensitive and credit-sensitive than SPY; financials and
+          regional banks are a meaningful weight. Higher IV than SPY.
+          By far the most option-liquid small-cap ETF; the default
+          small-cap VRP vehicle.
+      - symbol: IJR
+        issuer: iShares (BlackRock)
+        name: iShares Core S&P Small-Cap ETF
+        description: >
+          Tracks the S&P 600 Small-Cap Index — ~600 US small caps with a
+          profitability filter (S&P 600 requires positive earnings,
+          unlike Russell 2000). Largest small-cap ETF by AUM (~$98B).
+          Higher quality basket than IWM, slightly lower IV. Option
+          chain is thinner than IWM.
+      - symbol: VB
+        issuer: Vanguard
+        name: Vanguard Small-Cap ETF
+        description: >
+          Tracks the CRSP US Small Cap Index — ~1,300 small/mid-cap US
+          stocks (top of small-cap range bleeds into mid-cap territory).
+          ~$75B AUM, very low expense ratio (0.03%). Option chain is
+          thin.
+      - symbol: VTWO
+        issuer: Vanguard
+        name: Vanguard Russell 2000 ETF
+        description: >
+          Same underlying index as IWM (Russell 2000), Vanguard wrapper.
+          Lower expense ratio (0.10% vs IWM 0.19%) but option chain is
+          much thinner. Listed for completeness; for VRP execution, use
+          IWM.
+      - symbol: SCHA
+        issuer: Schwab
+        name: Schwab U.S. Small-Cap ETF
+        description: >
+          Tracks the Dow Jones US Small-Cap Total Stock Market Index —
+          ~1,700 US small caps. Lowest expense ratio in this group
+          (0.04%). Thin option market.
+      - symbol: VIOO
+        issuer: Vanguard
+        name: Vanguard S&P Small-Cap 600 ETF
+        description: >
+          Same underlying index as IJR (S&P 600), Vanguard wrapper. ~$3B
+          AUM, very thin options. Listed only for completeness — IJR is
+          the dominant S&P 600 vehicle.
+
+  # =====================================================================
+  # 3. EMERGING MARKETS
+  # EEM/EWZ/KWEB diverge in calm regimes but converge in stress.
+  # Treat as one group for correlation budgeting.
+  # =====================================================================
+  - name: emerging_markets
+    rationale: >
+      Emerging-market ETFs — broad EM, country (Brazil), and sector
+      (China internet). Idiosyncratic in calm regimes but correlate
+      strongly in EM-wide drawdowns. One slot per book.
+    tickers:
+      - symbol: EEM
+        issuer: iShares (BlackRock)
+        name: iShares MSCI Emerging Markets ETF
+        description: >
+          Tracks MSCI Emerging Markets Index — broad EM exposure across
+          ~25 countries (China ~30%, Taiwan, India, Korea, Brazil weighted
+          highest). Liquid options, the canonical EM short-vol vehicle.
+      - symbol: EWZ
+        issuer: iShares (BlackRock)
+        name: iShares MSCI Brazil ETF
+        description: >
+          Tracks MSCI Brazil 25/50 Index — large/mid-cap Brazilian
+          equities. Heavy financials (~33%), energy (~19%), materials
+          (~14%) — commodity- and BRL-FX-driven. Mentioned in §3.4 of the
+          strategy summary as a trending-asset example where static
+          condors lose; favor delta-hedged or one-sided structures.
+      - symbol: KWEB
+        issuer: KraneShares
+        name: KraneShares CSI China Internet ETF
+        description: >
+          Tracks CSI Overseas China Internet Index — pure-play Chinese
+          internet/tech (Alibaba, Tencent, Baidu, JD, Meituan, PDD).
+          Single-country, single-sector concentration; very high IV;
+          subject to China regulatory headline risk.
+      - symbol: IEMG
+        issuer: iShares (BlackRock)
+        name: iShares Core MSCI Emerging Markets ETF
+        description: >
+          Tracks MSCI Emerging Markets IMI Index — broader version of
+          EEM that includes small-caps (~3,000 holdings vs EEM's ~1,200).
+          Largest EM ETF by AUM (~$155B). Lower expense ratio than EEM
+          (0.09% vs 0.72%); option chain is meaningfully thinner than
+          EEM. For VRP execution, EEM still wins on liquidity.
+      - symbol: VWO
+        issuer: Vanguard
+        name: Vanguard FTSE Emerging Markets ETF
+        description: >
+          Tracks FTSE EM All Cap China A Inclusion Index — different
+          index family from EEM/IEMG (FTSE classifies South Korea as
+          developed, MSCI classifies it as emerging, so VWO has no
+          Korea exposure). ~$80B AUM. Thin options.
+      - symbol: FXI
+        issuer: iShares (BlackRock)
+        name: iShares China Large-Cap ETF
+        description: >
+          Tracks 50 largest China large-cap H-shares, P-chips, Red Chips
+          listed in Hong Kong. ~$6B AUM but punches well above its
+          weight in option liquidity — among the most liquid China
+          option chains. Heavy state-owned-enterprise tilt
+          (banks, oil, telcos), distinct from KWEB's tech focus.
+      - symbol: MCHI
+        issuer: iShares (BlackRock)
+        name: iShares MSCI China ETF
+        description: >
+          Broader China exposure than FXI — includes A-shares, H-shares,
+          and US-listed ADRs across all sectors. ~$6.6B AUM. Option
+          chain is moderately liquid but trails FXI. More diversified
+          than FXI or KWEB.
+      - symbol: INDA
+        issuer: iShares (BlackRock)
+        name: iShares MSCI India ETF
+        description: >
+          Largest US-listed India equity ETF. India is structurally less
+          correlated to China and the rest of EM (different demographics,
+          policy, FX), but in EM-wide drawdowns it still gets sold. Option
+          chain is moderately liquid. Heavy financials and IT
+          (Reliance, HDFC, Infosys, ICICI).
+      - symbol: EWY
+        issuer: iShares (BlackRock)
+        name: iShares MSCI South Korea ETF
+        description: >
+          South Korea large/mid-caps — Samsung, SK Hynix, Hyundai, LG.
+          MSCI classifies Korea as EM (FTSE classifies as developed, so
+          Korea is absent from VWO but present in EEM/IEMG). Heavy
+          memory-semi exposure via Samsung/SK Hynix → some
+          tech-cycle-correlation overlap.
+      - symbol: ASHR
+        issuer: Xtrackers (DWS)
+        name: Xtrackers Harvest CSI 300 China A-Shares ETF
+        description: >
+          Tracks CSI 300 — 300 largest mainland-China-listed A-shares
+          (Shanghai + Shenzhen exchanges). Different market mechanics
+          from FXI (Hong Kong-listed H-shares) and KWEB (US/HK-listed
+          ADRs). Same China macro driver but different shareholder base
+          (mainland retail-heavy) so vol surface diverges.
+
+  # =====================================================================
+  # 4. CRYPTO (BITCOIN + ETHEREUM)
+  # All BTC products are ~1:1 correlated. ETH ~0.85 daily-correlated
+  # to BTC — same risk-on/risk-off cluster, treat as one slot.
+  # =====================================================================
+  - name: crypto
+    rationale: >
+      Spot BTC, leveraged BTC futures, MSTR-as-BTC-proxy, and spot ETH.
+      BTC products correlate ~1:1; ETH/BTC daily correlation is ~0.85
+      and rises during crypto-wide selloffs. Trading more than one is
+      one big crypto-vol bet. Pick one slot.
+    tickers:
+      - symbol: IBIT
+        issuer: iShares (BlackRock)
+        name: iShares Bitcoin Trust
+        description: >
+          Spot Bitcoin ETF. Holds BTC directly via custodian. Largest US
+          spot-BTC ETF by AUM; the deepest-liquidity option chain among
+          spot BTC ETFs.
+      - symbol: FBTC
+        issuer: Fidelity
+        name: Fidelity Wise Origin Bitcoin Fund
+        description: >
+          Spot Bitcoin ETF. Same exposure as IBIT (holds BTC directly);
+          smaller AUM and slightly thinner option chain. Either FBTC or
+          IBIT works as the spot-BTC representative — prefer IBIT for
+          liquidity.
+      - symbol: BITX
+        issuer: Volatility Shares
+        name: 2x Bitcoin Strategy ETF
+        description: >
+          Daily 2x leveraged BTC futures (front- and second-month CME BTC
+          futures, rolled monthly). NOT a long-term hold — daily-reset
+          mechanics cause path-dependent decay. Top VRP winner in the
+          OQuants Aug-Sep 2025 leaderboard. High IV.
+      - symbol: MSTU
+        issuer: REX Shares / Tuttle
+        name: T-REX 2X Long MSTR Daily Target ETF
+        description: >
+          Daily 2x leveraged MicroStrategy (MSTR). MSTR holds ~500k BTC
+          on its balance sheet and effectively trades as a leveraged BTC
+          proxy; MSTU adds another 2x daily lever on top. Extreme IV.
+          freechowmein's iron-fly setup (§3.2 of the summary) included
+          MSTU.
+      - symbol: GBTC
+        issuer: Grayscale
+        name: Grayscale Bitcoin Trust ETF
+        description: >
+          Originally a closed-end trust (since 2013), converted to a spot
+          ETF in Jan 2024. Second-largest spot BTC ETF by AUM (~$14.9B)
+          but in persistent outflows due to high expense ratio (1.5% vs
+          IBIT 0.25%). Same spot-BTC exposure as IBIT/FBTC.
+      - symbol: ARKB
+        issuer: ARK Invest / 21Shares
+        name: ARK 21Shares Bitcoin ETF
+        description: >
+          Spot BTC ETF, ~$3-4B AUM. Same exposure as IBIT/FBTC. Option
+          chain exists but is much thinner than IBIT.
+      - symbol: BITB
+        issuer: Bitwise
+        name: Bitwise Bitcoin ETF
+        description: >
+          Spot BTC ETF, ~$3-4B AUM. Bitwise publishes its on-chain wallet
+          addresses for transparency. Same spot-BTC exposure as the rest
+          of the cluster; thin option chain.
+      - symbol: HODL
+        issuer: VanEck
+        name: VanEck Bitcoin ETF
+        description: >
+          Spot BTC ETF, ~$1.4B AUM. Lowest fee in the cohort (0% promo,
+          then 0.20%). Thin options.
+      - symbol: BTCO
+        issuer: Invesco / Galaxy Digital
+        name: Invesco Galaxy Bitcoin ETF
+        description: >
+          Spot BTC ETF, smaller AUM (~$500M-1B). Same exposure as the
+          rest. Listed for completeness.
+      - symbol: BITO
+        issuer: ProShares
+        name: ProShares Bitcoin Strategy ETF
+        description: >
+          Non-leveraged 1x BTC futures ETF (front- and second-month CME
+          BTC futures). Predates the spot BTC ETFs (launched Oct 2021).
+          Tracks BTC futures, not spot — has contango/backwardation
+          drag like USO. ~$2-3B AUM. Decent option liquidity. Same
+          correlation cluster as IBIT/FBTC; different roll mechanics.
+      - symbol: ETHA
+        issuer: iShares (BlackRock)
+        name: iShares Ethereum Trust
+        description: >
+          Spot Ethereum ETF (BlackRock). Largest spot ETH ETF by AUM
+          (~$8-10B). ETH and BTC daily-correlation ~0.85; in crypto
+          drawdowns it rises toward 1. Different protocol/utility story
+          but the vol regime is shared. Higher IV than IBIT.
+
+  # =====================================================================
+  # 5. PRECIOUS METALS (physical + miners)
+  # Physical gold/silver ETFs and gold/silver miner equity ETFs.
+  # GLD/SLV correlate ~0.7+; miners (GDX/SILJ) correlate ~0.6-0.8 to
+  # the underlying metals via operational leverage. All members share
+  # the metals risk factor and IV regime — one slot per book.
+  # =====================================================================
+  - name: precious_metals
+    rationale: >
+      Gold and silver exposure across two layers: physical
+      (GLD/IAU/GLDM/SGOL/AAAU/SLV/SIVR) and miner equity (GDX/SILJ).
+      All members are macro-correlated (real rates, USD) and move
+      with metals prices. Miners add operational leverage (~2-3x the
+      underlying metal in both directions) but the vol regime is
+      co-driven. One slot per book.
+    tickers:
+      - symbol: GLD
+        issuer: State Street (SPDR)
+        name: SPDR Gold Shares
+        description: >
+          Physical gold-backed ETF (vaulted gold bars). Largest and most
+          liquid gold ETF; deep option chain. Mentioned in §3.4 of the
+          summary as a trending asset where static condors fight the
+          trend; lost VRP money on the OQuants Aug-Sep 2025 leaderboard
+          (-$666 worst trade).
+      - symbol: SLV
+        issuer: iShares (BlackRock)
+        name: iShares Silver Trust
+        description: >
+          Physical silver-backed ETF. More volatile than GLD because
+          ~50% of silver demand is industrial (solar, electronics);
+          higher IV makes VRP edge larger but tail risk wider.
+      - symbol: IAU
+        issuer: iShares (BlackRock)
+        name: iShares Gold Trust
+        description: >
+          Physical gold-backed ETF, ~$70B AUM (second-largest gold ETF
+          after GLD). Lower expense ratio than GLD (0.25% vs 0.40%) but
+          option chain is thinner; for VRP execution, prefer GLD.
+      - symbol: GLDM
+        issuer: State Street (SPDR)
+        name: SPDR Gold MiniShares Trust
+        description: >
+          Physical gold-backed mini-share version of GLD, ~$25B AUM.
+          Lowest expense ratio of the major gold ETFs (0.10%). Thin
+          options — listed for completeness.
+      - symbol: SGOL
+        issuer: abrdn (Aberdeen)
+        name: abrdn Physical Gold Shares ETF
+        description: >
+          Physical gold-backed ETF with vault audits in Switzerland.
+          ~$3B AUM, low fee (0.17%). Thin options.
+      - symbol: AAAU
+        issuer: Goldman Sachs
+        name: Goldman Sachs Physical Gold ETF
+        description: >
+          Physical gold ETF custodied at JPMorgan vaults. Sub-billion
+          AUM. Thin options — listed for universe completeness.
+      - symbol: SIVR
+        issuer: abrdn (Aberdeen)
+        name: abrdn Physical Silver Shares ETF
+        description: >
+          Physical silver-backed ETF, ~$5.8B AUM (second-largest silver
+          ETF after SLV). Lower fee than SLV (0.30% vs 0.50%). Option
+          chain is much thinner than SLV; SLV remains the silver VRP
+          vehicle.
+      - symbol: GDX
+        issuer: VanEck
+        name: VanEck Gold Miners ETF
+        description: >
+          Large-cap gold miners (Newmont, Barrick, Agnico Eagle,
+          Franco-Nevada). ~$15B AUM. Most option-liquid gold-miner
+          ETF. Higher IV than GLD due to operating leverage and
+          single-name idiosyncratic risk. Daily correlation to GLD
+          ~0.7 (not 1:1 — equity layer adds beta and credit). Same
+          metals risk factor as GLD.
+      - symbol: SILJ
+        issuer: Amplify (formerly ETFMG Prime)
+        name: Amplify Junior Silver Miners ETF
+        description: >
+          Junior silver miners — small-cap, exploration-stage,
+          extremely high IV. Sub-$1B AUM. Marginal option liquidity
+          — confirm volume before sizing. Daily correlation to SLV
+          ~0.7, to GDX ~0.6.
+
+  # =====================================================================
+  # 6. OIL & ENERGY EQUITY
+  # Crude oil futures-ETFs (USO/BNO/USL/DBO) and US energy-sector
+  # equity (XLE/XOP). Oil-price is the dominant shared risk factor;
+  # daily correlation between XLE and USO is ~0.65-0.85, between
+  # XOP and USO ~0.75. Equity ETFs add beta and credit overlay but
+  # vol regime is co-driven by oil — one slot per book.
+  # =====================================================================
+  - name: oil_and_energy
+    rationale: >
+      Crude oil exposure across two layers: commodity (front-month
+      WTI/Brent futures via USO/BNO/USL/DBO) and equity (US energy
+      sector via XLE, oil & gas E&P via XOP). All members share the
+      oil-price risk factor and IV regime; pick one slot.
+    tickers:
+      - symbol: USO
+        issuer: United States Commodity Funds
+        name: United States Oil Fund
+        description: >
+          Tracks WTI crude via front-month NYMEX futures, rolled
+          monthly. Subject to contango/backwardation in the futures
+          curve (separate from the OPTION term-structure signal). Note
+          §2 caveat: USO has a positive IVP-vs-VRP regression slope —
+          high IV percentile is NOT a reason to skip USO.
+      - symbol: BNO
+        issuer: United States Commodity Funds
+        name: United States Brent Oil Fund
+        description: >
+          Tracks Brent crude (international benchmark) via front-month
+          ICE Brent futures. Brent often diverges from WTI on
+          geopolitical events (Middle East, Russia). ~$180M AUM; thin
+          options.
+      - symbol: USL
+        issuer: United States Commodity Funds
+        name: United States 12 Month Oil Fund
+        description: >
+          WTI crude exposure via 12 evenly-weighted monthly futures
+          contracts (vs USO's front-month-only structure). Smoother
+          curve exposure, less contango drag. ~$25M AUM; very thin
+          options.
+      - symbol: DBO
+        issuer: Invesco
+        name: Invesco DB Oil Fund
+        description: >
+          WTI crude via DBIQ Optimum Yield Crude Oil Index — picks the
+          futures contract with the best implied yield (less contango
+          drag than USO). Sub-$500M AUM; thin options. Listed for
+          completeness — non-leveraged WTI/Brent options beyond USO are
+          severely liquidity-constrained.
+      - symbol: XLE
+        issuer: State Street (SPDR)
+        name: Energy Select Sector SPDR Fund
+        description: >
+          Broad US energy sector equity — XOM, CVX, COP, EOG, SLB.
+          Heavily weighted toward integrated majors. ~$30B AUM. Most
+          option-liquid energy ETF. Equity layer adds beta to SPY
+          (~0.5-0.7) and credit exposure (E&P leverage) on top of the
+          oil-price driver. Daily correlation to USO ~0.65-0.85.
+      - symbol: XOP
+        issuer: State Street (SPDR)
+        name: SPDR S&P Oil & Gas Exploration & Production ETF
+        description: >
+          Equal-weighted oil & gas E&P names — smaller-cap, more
+          operationally leveraged than XLE. ~$3B AUM. Higher IV than
+          XLE; bankruptcy-tail risk in deep oil drawdowns (XOP -70% in
+          2020). Daily correlation to XLE ~0.90, to USO ~0.75.
+
+  # NOTE: Commodity-only crude oil has 4 viable non-leveraged ETFs
+  # (USO, BNO, USL, DBO); equity-side adds XLE and XOP. Leveraged
+  # versions (UCO 2x WTI, SCO -2x WTI, BOIL/KOLD natgas) are excluded
+  # per the universe rule against leveraged additions.
+
+  # =====================================================================
+  # 7. HIGH-YIELD CREDIT
+  # Credit-spread driven; correlates to equities in stress but distinct
+  # in calm regimes.
+  # =====================================================================
+  - name: high_yield_credit
+    rationale: >
+      US high-yield corporate bonds. Equity-correlated in drawdowns
+      (credit spreads widen with risk-off) but a different vol surface.
+    tickers:
+      - symbol: HYG
+        issuer: iShares (BlackRock)
+        name: iShares iBoxx $ High Yield Corporate Bond ETF
+        description: >
+          Tracks iBoxx USD Liquid High Yield Index — basket of US
+          high-yield (junk) corporate bonds. Lower IV than equity ETFs,
+          smaller per-trade premium but very stable VRP edge.
+          freechowmein's iron-fly setup (§3.2) includes HYG as the
+          credit diversifier. Most option-liquid HY ETF — primary VRP
+          vehicle in this group.
+      - symbol: USHY
+        issuer: iShares (BlackRock)
+        name: iShares Broad USD High Yield Corporate Bond ETF
+        description: >
+          Largest HY corporate bond ETF by AUM (~$26B, surpassed HYG in
+          total assets thanks to the 0.08% expense ratio vs HYG's
+          0.49%). Broader basket than HYG (ICE BofA US High Yield
+          Constrained Index, ~2,000 issues vs HYG's ~1,200). Option
+          chain is much thinner than HYG.
+      - symbol: JNK
+        issuer: State Street (SPDR)
+        name: SPDR Bloomberg High Yield Bond ETF
+        description: >
+          Tracks Bloomberg High Yield Very Liquid Index. Direct
+          competitor to HYG with similar duration and credit profile;
+          ~$7B AUM. Some option liquidity, less than HYG.
+      - symbol: SHYG
+        issuer: iShares (BlackRock)
+        name: iShares 0-5 Year High Yield Corporate Bond ETF
+        description: >
+          Short-duration HY (0-5 years to maturity vs HYG's full
+          curve). Lower duration = less rate sensitivity but same
+          credit risk; lower IV than HYG. ~$8B AUM. Thin options.
+      - symbol: BKLN
+        issuer: Invesco
+        name: Invesco Senior Loan ETF
+        description: >
+          Floating-rate senior bank loans (leveraged loans), not bonds.
+          Below-investment-grade like HYG but floating-rate so
+          duration ~0.25 vs HYG ~3.5. Different vol surface — useful
+          credit diversifier when rates are the dominant risk factor.
+          ~$8B AUM. Thin options.
+      - symbol: ANGL
+        issuer: VanEck
+        name: VanEck Fallen Angel High Yield Bond ETF
+        description: >
+          Tracks bonds that have been downgraded from investment-grade
+          to high-yield ("fallen angels"). Higher quality skew than HYG
+          but still below IG. Lower IV than the broad HY funds. Sub-$4B
+          AUM; thin options.
+
+  # =====================================================================
+  # 8. US RATES & INVESTMENT-GRADE CREDIT (long-duration fixed income)
+  # Long-duration rate-sensitive bonds. Treasuries (TLT/VGLT/EDV/
+  # ZROZ/SPTL/IEF + leveraged TMF) and investment-grade corporate
+  # bonds (LQD). LQD ↔ TLT daily correlation ~0.70 — both
+  # dominated by the rate-duration factor. Credit spread is a
+  # secondary LQD driver but doesn't separate the cluster enough
+  # for a distinct VRP slot.
+  # =====================================================================
+  - name: us_rates_and_ig_credit
+    rationale: >
+      US rate-duration risk factor across Treasury and IG corporate
+      bond ETFs. All members share the long-duration rate driver and
+      a similar IV regime. Mentioned in §3.4 of the summary as a
+      trending asset — prefer one-sided structures. Pick one slot
+      per book.
+    tickers:
+      - symbol: TMF
+        issuer: Direxion
+        name: Direxion Daily 20+ Year Treasury Bull 3X Shares
+        description: >
+          Daily 3x leveraged exposure to ICE US Treasury 20+ Year Bond
+          Index. Very high IV due to leverage; daily-reset decay over
+          long holds. Direction-sensitive — trends in long-end rates
+          punish static condors.
+      - symbol: TLT
+        issuer: iShares (BlackRock)
+        name: iShares 20+ Year Treasury Bond ETF
+        description: >
+          Non-leveraged version of TMF's underlying — direct exposure
+          to ICE US Treasury 20+ Year Bond Index. ~$42B AUM, the most
+          option-liquid long-duration Treasury ETF by far. Primary
+          long-end-rates VRP vehicle in this group; treat TMF as the
+          high-octane variant for premium-rich plays.
+      - symbol: VGLT
+        issuer: Vanguard
+        name: Vanguard Long-Term Treasury ETF
+        description: >
+          Tracks Bloomberg US Long Treasury Index (10-25 year
+          maturities). ~$14B AUM, lower expense ratio than TLT
+          (0.03% vs 0.15%). Slightly shorter duration than TLT (~16y
+          vs ~17y). Option chain is thin — TLT is the practical
+          choice for VRP.
+      - symbol: EDV
+        issuer: Vanguard
+        name: Vanguard Extended Duration Treasury ETF
+        description: >
+          Holds Treasury STRIPS (zero-coupon bonds, 20-30 year
+          maturities). Highest duration of any non-leveraged Treasury
+          ETF (~24y) — more rate-sensitive than TLT. ~$4.4B AUM. Thin
+          options.
+      - symbol: ZROZ
+        issuer: PIMCO
+        name: PIMCO 25+ Year Zero Coupon US Treasury Index ETF
+        description: >
+          Direct competitor to EDV — zero-coupon Treasuries 25+ years
+          to maturity. Very high duration, very rate-sensitive.
+          Sub-$2B AUM. Thin options.
+      - symbol: SPTL
+        issuer: State Street (SPDR)
+        name: SPDR Portfolio Long Term Treasury ETF
+        description: >
+          Tracks Bloomberg Long US Treasury Index (10+ year
+          maturities). Same exposure as VGLT, different index. Sub-$15B
+          AUM. Thin options. Listed for completeness.
+      - symbol: IEF
+        issuer: iShares (BlackRock)
+        name: iShares 7-10 Year Treasury Bond ETF
+        description: >
+          Medium-duration Treasury (7-10 year maturities, ~7y duration
+          vs TLT's ~17y). Lower IV than TLT — smaller per-trade premium
+          but smoother path. Daily-return correlation to TLT ~0.85+
+          (same rate driver, different convexity). ~$30B AUM. Decent
+          option liquidity — second only to TLT in the rate-curve
+          options market.
+      - symbol: LQD
+        issuer: iShares (BlackRock)
+        name: iShares iBoxx $ Investment Grade Corporate Bond ETF
+        description: >
+          Broad IG corporate bond exposure (~2,500 holdings). Duration
+          ~8 years, average credit BBB+. ~$30B AUM. Most option-liquid
+          IG corporate bond ETF. Daily-return correlation to TLT ~0.70
+          (rate-driven) and to HYG ~0.50 (less spread-sensitive than
+          high yield). Lower IV than HYG; smaller per-trade VRP
+          premium but very stable.
+
+  # =====================================================================
+  # 9. LONG VOLATILITY (VIX FUTURES)
+  # All three track front-month VIX futures with different leverage.
+  # Highly correlated; one slot.
+  # =====================================================================
+  - name: long_volatility_vix
+    rationale: >
+      Long-VIX-futures ETFs. VXX (1x), UVXY (1.5x), UVIX (2x) all
+      track the same underlying (front- and second-month VIX futures);
+      different leverage but ~1:1 correlated daily moves. Critical:
+      these have STRUCTURAL DECAY (negative roll yield in contango)
+      so per §3.4, sell them with a CALL WING ONLY (no put wing) —
+      downside drift is your edge, upside vol-spike is the only way
+      you blow up.
+    tickers:
+      - symbol: VXX
+        issuer: Barclays (iPath)
+        name: iPath Series B S&P 500 VIX Short-Term Futures ETN
+        description: >
+          1x exposure to S&P 500 VIX Short-Term Futures Index
+          (front- and second-month VIX futures, daily rolled).
+          Technically an ETN (unsecured Barclays note), not an ETF —
+          credit-risk note worth flagging in scheduler output.
+      - symbol: UVXY
+        issuer: ProShares
+        name: ProShares Ultra VIX Short-Term Futures ETF
+        description: >
+          1.5x daily leveraged long-VIX-futures ETF. Heavy structural
+          decay; reverse splits are FREQUENT and SCHEDULED — _.mrpascal._
+          flagged this in the Discord (§4 entry checklist item 7).
+          Check TradingView for upcoming splits before opening a
+          position. freechowmein's iron-fly basket includes UVXY.
+      - symbol: UVIX
+        issuer: Volatility Shares
+        name: 2x Long VIX Futures ETF
+        description: >
+          2x daily leveraged long-VIX-futures ETF. Tracks LONGVOL
+          Index, which uses a 15-min TWAP to dampen end-of-day VIX
+          futures noise. Highest leverage in the long-vol group;
+          steepest decay.
+      - symbol: VIXY
+        issuer: ProShares
+        name: ProShares VIX Short-Term Futures ETF
+        description: >
+          1x exposure to S&P 500 VIX Short-Term Futures Index — same
+          underlying basket as VXX (front- and second-month VIX
+          futures, daily rolled). VIXY is structured as an ETF (1940
+          Act) vs VXX which is an ETN (Barclays unsecured note); no
+          credit-risk overlay. Thin options vs VXX.
+      - symbol: VXZ
+        issuer: Barclays (iPath)
+        name: iPath Series B S&P 500 VIX Mid-Term Futures ETN
+        description: >
+          1x exposure to mid-term VIX futures (4th-7th month
+          contracts). Less convex than VXX/VIXY — slower to spike on
+          shocks but less negative roll-yield in normal contango.
+          Different vol-surface profile from front-month products.
+          Sub-$100M AUM; thin options.
+      - symbol: VIXM
+        issuer: ProShares
+        name: ProShares VIX Mid-Term Futures ETF
+        description: >
+          1x mid-term VIX futures (same underlying index family as
+          VXZ, ETF wrapper). Lower decay than VIXY/VXX in contango
+          regimes; smaller spike on vol shocks. Thin options.
+
+  # NOTE: This category is dominated by leveraged products (UVXY 1.5x,
+  # UVIX 2x). Only three viable non-leveraged 1x VIX ETPs exist
+  # (VIXY, VXZ, VIXM) — VXX is already listed above as an ETN.
+
+  # =====================================================================
+  # 10. US TECHNOLOGY SECTOR (incl. thematic innovation)
+  # Broad tech, software, semiconductors, and active-managed
+  # disruptive-tech (ARKK). All members share the tech risk factor —
+  # pairwise daily correlations 0.65-0.99.
+  # =====================================================================
+  - name: us_technology_sector
+    rationale: >
+      US tech sector ETFs — broad tech (XLK), software (IGV),
+      semiconductors (SMH/SOXX), memory (DRAM), active-managed
+      innovation (ARKK). Within-tech sub-sectors correlate 0.65+ via
+      the shared tech risk factor; semis (SMH/SOXX/DRAM) correlate
+      ~0.99. Trade one slot for the whole tech complex.
+    tickers:
+      - symbol: XLK
+        issuer: State Street (SPDR)
+        name: Technology Select Sector SPDR Fund
+        description: >
+          Broad US tech sector — Apple, Microsoft, Nvidia, Broadcom
+          dominate. ~$80B AUM. The most option-liquid sector ETF.
+          Effectively "QQQ minus the non-tech names"; correlation to
+          QQQ ~0.95+.
+      - symbol: IGV
+        issuer: iShares (BlackRock)
+        name: iShares Expanded Tech-Software Sector ETF
+        description: >
+          Pure-play software (Microsoft, Salesforce, Oracle, ServiceNow,
+          Adobe). No semis, no hardware. Daily-return correlation to
+          XLK ~0.85, to SMH ~0.65 (less correlated to chip cycle).
+          ~$10B AUM.
+      - symbol: SMH
+        issuer: VanEck
+        name: VanEck Semiconductor ETF
+        description: >
+          Concentrated semiconductor basket (Nvidia, TSM, AVGO, AMD,
+          ASML). 25 holdings, very top-heavy (Nvidia ~20%+). Highest
+          IV among the major sector ETFs. Daily correlation to XLK
+          ~0.85, to SOXX ~0.99. Note: Nvidia is on the FF blacklist —
+          single-stock NVDA exposure here is meaningful but indirect.
+      - symbol: SOXX
+        issuer: iShares (BlackRock)
+        name: iShares Semiconductor ETF
+        description: >
+          Same sector as SMH (semis), tracks PHLX Semiconductor Sector
+          Index. ~30 holdings, slightly less top-heavy than SMH. Daily
+          correlation to SMH ~0.99. Pick one of SMH/SOXX, not both.
+      - symbol: DRAM
+        issuer: Roundhill
+        name: Roundhill Memory ETF
+        description: >
+          Pure-play memory chip makers (Micron, Samsung, SK Hynix,
+          Western Digital). Sub-sector of semis with its own commodity
+          cycle (memory pricing). Daily correlation to SMH ~0.85,
+          higher in memory-cycle moves. Small AUM, marginal option
+          liquidity — confirm 20k contracts/day before sizing.
+      - symbol: ARKK
+        issuer: ARK Invest
+        name: ARK Innovation ETF
+        description: >
+          Active-managed disruptive-innovation basket — Tesla,
+          Coinbase, Roblox, Palantir, Robinhood, Block, Roku.
+          ~$5B AUM. Very high IV. Daily correlation to QQQ ~0.7-0.8
+          and to XLK ~0.65-0.75 — same tech cluster, just smaller-cap
+          and active-managed. Higher beta than XLK.
+
+  # =====================================================================
+  # 11. US CYCLICALS SECTOR (industrials + materials + airlines + financials)
+  # Global-growth/capex risk factor. Industrials (XLI), materials
+  # (XLB), airlines (JETS), broad financials (XLF), regional banks
+  # (KRE). Pairwise correlations 0.65-0.85 via shared cyclical
+  # exposure (XLI ↔ XLB ~0.75, XLF ↔ XLI ~0.70, XLF ↔ KRE ~0.85).
+  # Financials add rates/credit drivers but the cyclical-beta
+  # overlap is large enough to put them in the same slot.
+  # =====================================================================
+  - name: us_cyclicals_sector
+    rationale: >
+      US cyclical-equity risk factor — industrials (XLI), materials
+      (XLB), airlines (JETS), broad financials (XLF), regional banks
+      (KRE). Pairwise correlations 0.65+ via shared global-growth /
+      capex / yield-curve driver. Pick one slot per book.
+    tickers:
+      - symbol: XLI
+        issuer: State Street (SPDR)
+        name: Industrial Select Sector SPDR Fund
+        description: >
+          Broad US industrials — Caterpillar, Honeywell, RTX, UPS,
+          Boeing, Lockheed, GE Aerospace. ~$25B AUM. Decent option
+          liquidity. Reflects global-growth and capex cycle.
+      - symbol: XLB
+        issuer: State Street (SPDR)
+        name: Materials Select Sector SPDR Fund
+        description: >
+          Broad US materials sector — Linde, Sherwin-Williams, Air
+          Products, Freeport-McMoRan, Newmont, Dow, DuPont. ~$5B AUM.
+          Moderate option liquidity. Has gold-miner exposure (Newmont)
+          and chemical/industrial commodity exposure. Daily correlation
+          to XLI ~0.75.
+      - symbol: JETS
+        issuer: U.S. Global Investors
+        name: U.S. Global Jets ETF
+        description: >
+          Airlines basket (Delta, American, United, Southwest, plus
+          some aircraft makers). ~$1B AUM. Moderate option liquidity.
+          Highly oil-price-sensitive (jet fuel) and demand-cyclical;
+          sharp tails (e.g. -50%+ in COVID). Higher IV than XLI.
+      - symbol: XLF
+        issuer: State Street (SPDR)
+        name: Financial Select Sector SPDR Fund
+        description: >
+          Broad US financials — JPM, BAC, WFC, BRK.B, V, MA, Goldman,
+          MS. ~$50B AUM. Decent option liquidity. Sensitive to yield
+          curve and credit. Daily correlation to XLI ~0.70.
+      - symbol: KRE
+        issuer: State Street (SPDR)
+        name: SPDR S&P Regional Banking ETF
+        description: >
+          ~140 US regional banks. Much higher IV than XLF — exhibit A
+          was the SVB / First Republic / Signature crisis in March
+          2023. Daily correlation to XLF ~0.80 in calm regimes, ~0.95
+          in bank-stress. Smaller deposits / commercial-real-estate
+          exposure makes KRE distinctly tail-prone — wing wider than
+          you would on XLF.
+
+  # =====================================================================
+  # 13. US DEFENSIVES SECTOR (utilities + consumer staples)
+  # Defensive, rate-sensitive equity. XLU ↔ XLP daily correlation
+  # ~0.55-0.65 — both yield-driven, both inversely sensitive to
+  # long-end rates, both low-beta to SPY (~0.4-0.5). Same low-IV
+  # VRP regime.
+  # =====================================================================
+  - name: us_defensives_sector
+    rationale: >
+      US defensive-equity risk factor — utilities (XLU) and consumer
+      staples (XLP). Both dividend-yield-driven, low beta to SPY
+      (~0.4-0.5), and rate-sensitive (long-duration equity proxies).
+      Similar low-IV VRP regime; correlation ~0.55-0.65. Pick one
+      slot per book.
+    tickers:
+      - symbol: XLU
+        issuer: State Street (SPDR)
+        name: Utilities Select Sector SPDR Fund
+        description: >
+          Broad US utilities — NextEra, Southern, Duke, American
+          Electric, Constellation. ~$15B AUM. Low IV — VRP edge per
+          trade is small but consistent. Defensive in equity drawdowns
+          (correlation to SPY ~0.4-0.6); rate-sensitive (long-duration
+          equity proxy).
+      - symbol: XLP
+        issuer: State Street (SPDR)
+        name: Consumer Staples Select Sector SPDR Fund
+        description: >
+          Broad US consumer staples — PG, COST, WMT, KO, PEP, PM,
+          MO. ~$15B AUM. Low IV (similar regime to XLU). Defensive
+          beta to SPY ~0.5. Suitable for steady, low-edge VRP.
+
+  # =====================================================================
+  # 14. NATURAL GAS
+  # Single-ETF group — distinct commodity from oil; weather-driven.
+  # =====================================================================
+  - name: natural_gas
+    rationale: >
+      Front-month natural gas futures. Different commodity driver
+      from crude (weather + storage + LNG-export demand vs OPEC +
+      global demand). Distinct from `crude_oil` group.
+    tickers:
+      - symbol: UNG
+        issuer: United States Commodity Funds
+        name: United States Natural Gas Fund
+        description: >
+          Front-month NYMEX nat-gas futures, rolled monthly. Severe
+          contango drag — UNG has lost >99% over its lifetime.
+          Higher IV than USO. ~$500M AUM. Decent option liquidity.
+          Per §3.4 of strategy summary, structural-decay products
+          should be sold with one-sided structures (call wing only).
+
+  # =====================================================================
+  # 15. US CANNABIS
+  # Single-ETF group — niche regulatory-driven sector. Marginal
+  # liquidity; high tail risk on rescheduling/regulatory news.
+  # =====================================================================
+  - name: us_cannabis
+    rationale: >
+      US-listed cannabis multi-state operators. Driven by US
+      federal scheduling/regulatory news, distinct from any other
+      sector. Marginal option liquidity; very high IV.
+    tickers:
+      - symbol: MSOS
+        issuer: AdvisorShares
+        name: AdvisorShares Pure US Cannabis ETF
+        description: >
+          Pure-play US cannabis MSOs (Curaleaf, Trulieve, Green
+          Thumb, Verano). ~$1B AUM. Extreme IV — single-day moves
+          of 20%+ on rescheduling headlines. Confirm option
+          liquidity (20k contracts/day) before sizing; this is
+          near the edge of the universe filter.
