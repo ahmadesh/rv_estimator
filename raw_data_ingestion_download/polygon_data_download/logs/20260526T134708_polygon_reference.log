@@ -1,0 +1,6 @@
+[13:47:08] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T134708_polygon_reference.log
+[13:47:08] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py reference --datasets all_tickers
+[13:47:13]   active=true: 12,649 tickers
+[13:47:17]   active=false: 23,100 tickers
+[13:47:17] [all_tickers] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/reference/all_tickers.parquet  (35,749 rows)
+[13:47:17] [log] reference finished OK in 8.8s

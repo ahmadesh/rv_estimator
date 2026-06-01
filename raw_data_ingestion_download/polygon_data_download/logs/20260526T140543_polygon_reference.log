@@ -1,0 +1,5 @@
+[14:05:43] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T140543_polygon_reference.log
+[14:05:43] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py reference --datasets overview --tickers AAPL MSFT GOOGL JPM XOM --workers 5
+[14:05:43] [overview] 5 to fetch  (skipping 0 done/empty/unavailable)
+[14:05:43]   [overview] /Users/ahmade/Documents/rv_estimator/polygon_parquet/reference/overview.parquet now has 5 rows
+[14:05:43] [log] reference finished OK in 0.4s

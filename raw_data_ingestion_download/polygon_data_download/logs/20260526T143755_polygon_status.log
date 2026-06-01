@@ -1,0 +1,49 @@
+[14:37:55] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T143755_polygon_status.log
+[14:37:55] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py status
+[14:37:56] dataset                status          count
+[14:37:56] all_tickers            downloaded          1
+[14:37:56] balance_sheets         downloaded       8442
+[14:37:56] balance_sheets         empty            8074
+[14:37:56] cash_flow              downloaded       8448
+[14:37:56] cash_flow              empty            8068
+[14:37:56] dividends              downloaded          1
+[14:37:56] exchanges              downloaded          1
+[14:37:56] income_statements      downloaded       8452
+[14:37:56] income_statements      empty            8064
+[14:37:56] market_holidays        downloaded          1
+[14:37:56] overview               downloaded       9593
+[14:37:56] overview               unavailable      6923
+[14:37:56] ratios                 downloaded       4690
+[14:37:56] ratios                 empty           11826
+[14:37:56] short_interest         downloaded      13922
+[14:37:56] short_interest         empty            2594
+[14:37:56] short_volume           downloaded      11829
+[14:37:56] short_volume           empty            4683
+[14:37:56] short_volume           failed              4
+[14:37:56] splits                 downloaded          1
+[14:37:56] ticker_events          downloaded       9593
+[14:37:56] ticker_events          unavailable      6923
+[14:37:56] ticker_types           downloaded          1
+
+[14:37:56] rows downloaded by dataset:
+[14:37:56]   all_tickers                  35,749
+[14:37:56]   balance_sheets              307,576
+[14:37:56]   cash_flow                   528,997
+[14:37:56]   dividends                   707,167
+[14:37:56]   exchanges                        27
+[14:37:56]   income_statements           546,998
+[14:37:56]   market_holidays                  24
+[14:37:56]   overview                      9,593
+[14:37:56]   ratios                        4,690
+[14:37:56]   short_interest            1,785,765
+[14:37:56]   short_volume              5,443,597
+[14:37:56]   splits                       26,902
+[14:37:56]   ticker_events                10,579
+[14:37:56]   ticker_types                     24
+
+[14:37:56] failed (4):
+[14:37:56]   short_volume LOGI: HTTP 403: 
+[14:37:56]   short_volume LOJN: HTTP 403: 
+[14:37:56]   short_volume LPI: HTTP 403: 
+[14:37:56]   short_volume LRND: HTTP 403: 
+[14:37:56] [log] status finished OK in 0.2s

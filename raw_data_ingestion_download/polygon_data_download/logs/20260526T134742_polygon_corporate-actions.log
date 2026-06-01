@@ -1,0 +1,5 @@
+[13:47:42] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T134742_polygon_corporate-actions.log
+[13:47:42] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py corporate-actions --datasets splits dividends
+[13:47:47] [splits] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/corporate_actions/splits.parquet  (26,902 rows)
+[13:54:46] [dividends] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/corporate_actions/dividends.parquet  (707,167 rows)
+[13:54:46] [log] corporate-actions finished OK in 423.8s

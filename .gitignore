@@ -1,2 +1,17 @@
 .claude/
 .DS_Store
+.env
+.env.*
+!.env.example
+.venv/
+orats_data_preprocess/logs/
+orats_data_preprocess/orats_data_sandbox/
+polygon_data_download/logs/
+# local staging mirror of the drive's polygon_parquet/ (moved to Ex-Disk later)
+polygon_parquet/
+
+# rv_eval evaluator: staged raw subset, derived panels, run outputs (large/regenerable)
+execution/data/
+execution/reports/
+__pycache__/
+.pytest_cache/

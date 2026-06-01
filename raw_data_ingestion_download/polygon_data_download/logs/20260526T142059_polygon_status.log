@@ -1,0 +1,27 @@
+[14:20:59] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T142059_polygon_status.log
+[14:20:59] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py status
+[14:20:59] dataset                status          count
+[14:20:59] all_tickers            downloaded          1
+[14:20:59] dividends              downloaded          1
+[14:20:59] exchanges              downloaded          1
+[14:20:59] income_statements      downloaded        385
+[14:20:59] income_statements      empty             215
+[14:20:59] market_holidays        downloaded          1
+[14:20:59] overview               downloaded       9593
+[14:20:59] overview               unavailable      6923
+[14:20:59] splits                 downloaded          1
+[14:20:59] ticker_events          downloaded       9593
+[14:20:59] ticker_events          unavailable      6923
+[14:20:59] ticker_types           downloaded          1
+
+[14:20:59] rows downloaded by dataset:
+[14:20:59]   all_tickers                  35,749
+[14:20:59]   dividends                   707,167
+[14:20:59]   exchanges                        27
+[14:20:59]   income_statements            24,852
+[14:20:59]   market_holidays                  24
+[14:20:59]   overview                      9,593
+[14:20:59]   splits                       26,902
+[14:20:59]   ticker_events                10,579
+[14:20:59]   ticker_types                     24
+[14:20:59] [log] status finished OK in 0.1s

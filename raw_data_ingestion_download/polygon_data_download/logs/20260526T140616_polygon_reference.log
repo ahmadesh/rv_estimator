@@ -1,0 +1,34 @@
+[14:06:16] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T140616_polygon_reference.log
+[14:06:16] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py reference --datasets overview --workers 12
+[14:06:16] [overview] 16511 to fetch  (skipping 5 done/empty/unavailable)
+[14:06:18]   [overview] 200/16511 processed
+[14:06:20]   [overview] 400/16511 processed
+[14:06:21]   [overview] 600/16511 processed
+[14:06:23]   [overview] 800/16511 processed
+[14:06:24]   [overview] 1000/16511 processed
+[14:06:26]   [overview] 1200/16511 processed
+[14:06:28]   [overview] 1400/16511 processed
+[14:06:29]   [overview] 1600/16511 processed
+[14:06:31]   [overview] 1800/16511 processed
+[14:06:32]   [overview] 2000/16511 processed
+[14:06:34]   [overview] 2200/16511 processed
+[14:06:35]   [overview] 2400/16511 processed
+[14:06:37]   [overview] 2600/16511 processed
+[14:06:39]   [overview] 2800/16511 processed
+[14:06:40]   [overview] 3000/16511 processed
+[14:06:42]   [overview] 3200/16511 processed
+[14:06:43]   [overview] 3400/16511 processed
+[14:06:45]   [overview] 3600/16511 processed
+[14:06:46]   [overview] 3800/16511 processed
+[14:06:48]   [overview] 4000/16511 processed
+[14:06:50]   [overview] 4200/16511 processed
+[14:06:51]   [overview] 4400/16511 processed
+[14:06:53]   [overview] 4600/16511 processed
+[14:06:55]   [overview] 4800/16511 processed
+[14:06:56]   [overview] 5000/16511 processed
+[14:06:58]   [overview] 5200/16511 processed
+[14:06:59]   [overview] 5400/16511 processed
+[14:07:01]   [overview] 5600/16511 processed
+[14:07:02]   [overview] 5800/16511 processed
+[14:07:04]   [overview] 6000/16511 processed
+[14:07:06]   [overview] 6200/16511 processed

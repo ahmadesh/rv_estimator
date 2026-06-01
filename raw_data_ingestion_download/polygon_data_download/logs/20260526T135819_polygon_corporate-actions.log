@@ -1,0 +1,5 @@
+[13:58:19] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T135819_polygon_corporate-actions.log
+[13:58:19] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py corporate-actions --datasets ticker_events --tickers AAPL MSFT --workers 2
+[13:58:19] [ticker_events] 2 to fetch  (skipping 0 done/empty)
+[13:58:19]   [ticker_events] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/corporate_actions/ticker_events.parquet  (2 rows)
+[13:58:19] [log] corporate-actions finished OK in 0.4s

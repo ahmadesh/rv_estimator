@@ -1,0 +1,33 @@
+[project]
+name = "rv-estimator"
+version = "0.1.0"
+description = "Forward realized-volatility forecasting evaluator (strategy-agnostic forecast-quality harness)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # data
+    "polars>=1.36",
+    "pyarrow>=21",
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "pyyaml>=6.0",
+    "requests>=2.31",
+    # modeling / stats
+    "scipy>=1.13",
+    "statsmodels>=0.14",
+    "arch>=7.0",
+    "scikit-learn>=1.5",
+    "xgboost>=2.1",
+    "torch>=2.4",
+    # reporting
+    "matplotlib>=3.9",
+    "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["rv_eval/tests"]

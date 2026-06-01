@@ -1,0 +1,6 @@
+[14:05:42] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T140542_polygon_reference.log
+[14:05:42] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py reference --datasets exchanges ticker_types market_holidays
+[14:05:42] [exchanges] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/reference/exchanges.parquet  (27 rows)
+[14:05:43] [ticker_types] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/reference/ticker_types.parquet  (24 rows)
+[14:05:43] [market_holidays] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/reference/market_holidays.parquet  (24 rows)
+[14:05:43] [log] reference finished OK in 0.5s

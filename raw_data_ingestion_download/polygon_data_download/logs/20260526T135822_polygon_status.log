@@ -1,0 +1,49 @@
+[13:58:22] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T135822_polygon_status.log
+[13:58:22] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py status
+[13:58:22] dataset                status          count
+[13:58:22] all_tickers            downloaded          1
+[13:58:22] balance_sheets         downloaded          3
+[13:58:22] cash_flow              downloaded          3
+[13:58:22] dividends              downloaded          1
+[13:58:22] income_statements      downloaded          3
+[13:58:22] overview               downloaded       5701
+[13:58:22] overview               empty            4083
+[13:58:22] overview               failed             17
+[13:58:22] ratios                 downloaded          3
+[13:58:22] short_interest         downloaded          3
+[13:58:22] short_volume           downloaded          3
+[13:58:22] splits                 downloaded          1
+[13:58:22] ticker_events          downloaded          2
+
+[13:58:22] rows downloaded by dataset:
+[13:58:22]   all_tickers                  35,749
+[13:58:22]   balance_sheets                  237
+[13:58:22]   cash_flow                       417
+[13:58:22]   dividends                   707,167
+[13:58:22]   income_statements               431
+[13:58:22]   overview                      5,701
+[13:58:22]   ratios                            3
+[13:58:22]   short_interest                  603
+[13:58:22]   short_volume                  1,728
+[13:58:22]   splits                       26,902
+[13:58:22]   ticker_events                     2
+
+[13:58:22] failed (17):
+[13:58:22]   overview BF_A: HTTP 400: {"status":"ERROR","request_id":"f83823edfa6c85b31fafe312180a8bab","error":"Invalid ticker: BF_A"}
+[13:58:22]   overview BF_B: HTTP 400: {"status":"ERROR","request_id":"0f6056e11549d5eb9d4d87def552ada2","error":"Invalid ticker: BF_B"}
+[13:58:22]   overview BRK_B: HTTP 400: {"status":"ERROR","request_id":"e80fa4e4223ca9fee39e5bb9df898ba3","error":"Invalid ticker: BRK_B"}
+[13:58:22]   overview CBS_A: HTTP 400: {"status":"ERROR","request_id":"3a15db86d12fb6593d0ab3e90646c3a7","error":"Invalid ticker: CBS_A"}
+[13:58:22]   overview CRD_A: HTTP 400: {"status":"ERROR","request_id":"c19040cff097db21f6190d3ae63d3391","error":"Invalid ticker: CRD_A"}
+[13:58:22]   overview C_BEN: HTTP 400: {"status":"ERROR","request_id":"7de5684b0002684e19ddb79659a717b3","error":"Invalid ticker: C_BEN"}
+[13:58:22]   overview C_BLS: HTTP 400: {"status":"ERROR","request_id":"fa97d2af32c1086dc5b4b2b4c0ee86ac","error":"Invalid ticker: C_BLS"}
+[13:58:22]   overview C_CORE: HTTP 400: {"status":"ERROR","request_id":"4fe1fcef2d028ebacc48f1dec83d2ca1","error":"Invalid ticker: C_CORE"}
+[13:58:22]   overview C_NRE: HTTP 400: {"status":"ERROR","request_id":"dbe3fa2ed5ed562a26545bd4f1a3cefd","error":"Invalid ticker: C_NRE"}
+[13:58:22]   overview EBR_B: HTTP 400: {"status":"ERROR","request_id":"46f4afd1f212dd1f479b5889d31de04f","error":"Invalid ticker: EBR_B"}
+[13:58:22]   overview FCE_A: HTTP 400: {"status":"ERROR","request_id":"7ce7d1b56afdf35ccaa18bf6309db8e3","error":"Invalid ticker: FCE_A"}
+[13:58:22]   overview HEI_A: HTTP 400: {"status":"ERROR","request_id":"fe0217234b0a0f836378a4acd59ba85f","error":"Invalid ticker: HEI_A"}
+[13:58:22]   overview HUB_B: HTTP 400: {"status":"ERROR","request_id":"351e056add95500c08529d3e6b25584e","error":"Invalid ticker: HUB_B"}
+[13:58:22]   overview JW_A: HTTP 400: {"status":"ERROR","request_id":"94a48f7759cd648c4da578eeb482d895","error":"Invalid ticker: JW_A"}
+[13:58:22]   overview LGF_A: HTTP 400: {"status":"ERROR","request_id":"ae2200ec91d3e7ffecd55ba008d10b77","error":"Invalid ticker: LGF_A"}
+[13:58:22]   overview LGF_B: HTTP 400: {"status":"ERROR","request_id":"6ab295b1f564ed8c79adf7303bed3d4c","error":"Invalid ticker: LGF_B"}
+[13:58:22]   overview MOG_A: HTTP 400: {"status":"ERROR","request_id":"71d01351946a02e95775754b2ca3e439","error":"Invalid ticker: MOG_A"}
+[13:58:22] [log] status finished OK in 0.0s

@@ -1,0 +1,5 @@
+[14:02:12] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T140212_polygon_fundamentals.log
+[14:02:12] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py fundamentals --tickers BRK_B --datasets income_statements --workers 1
+[14:02:12] universe: 1 tickers  datasets: ['income_statements']  workers: 1
+[14:02:12] [income_statements] 1 to fetch  (skipping 0 done/empty)
+[14:02:13] [log] fundamentals finished OK in 0.5s

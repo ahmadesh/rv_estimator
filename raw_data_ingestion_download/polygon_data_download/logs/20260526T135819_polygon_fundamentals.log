@@ -1,0 +1,10 @@
+[13:58:19] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T135819_polygon_fundamentals.log
+[13:58:19] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py fundamentals --tickers AAPL MSFT JPM --workers 3
+[13:58:19] universe: 3 tickers  datasets: ['income_statements', 'balance_sheets', 'cash_flow', 'ratios', 'short_interest', 'short_volume']  workers: 3
+[13:58:19] [income_statements] 3 to fetch  (skipping 0 done/empty)
+[13:58:20] [balance_sheets] 3 to fetch  (skipping 0 done/empty)
+[13:58:20] [cash_flow] 3 to fetch  (skipping 0 done/empty)
+[13:58:21] [ratios] 3 to fetch  (skipping 0 done/empty)
+[13:58:21] [short_interest] 3 to fetch  (skipping 0 done/empty)
+[13:58:22] [short_volume] 3 to fetch  (skipping 0 done/empty)
+[13:58:22] [log] fundamentals finished OK in 2.8s

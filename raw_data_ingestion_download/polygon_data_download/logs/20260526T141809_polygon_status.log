@@ -1,0 +1,19 @@
+[14:18:09] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T141809_polygon_status.log
+[14:18:09] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py status
+[14:18:09] dataset                status          count
+[14:18:09] all_tickers            downloaded          1
+[14:18:09] exchanges              downloaded          1
+[14:18:09] market_holidays        downloaded          1
+[14:18:09] overview               downloaded       9593
+[14:18:09] overview               unavailable      6923
+[14:18:09] splits                 downloaded          1
+[14:18:09] ticker_types           downloaded          1
+
+[14:18:09] rows downloaded by dataset:
+[14:18:09]   all_tickers                  35,749
+[14:18:09]   exchanges                        27
+[14:18:09]   market_holidays                  24
+[14:18:09]   overview                      9,593
+[14:18:09]   splits                       26,902
+[14:18:09]   ticker_types                     24
+[14:18:09] [log] status finished OK in 0.0s

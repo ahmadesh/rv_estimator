@@ -1,0 +1,5 @@
+[23:48:58] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260525T234858_polygon_build-universe.log
+[23:48:58] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py build-universe
+[23:49:47] orats tickers: 12,141  polygon tickers: 10,658  union: 16,516
+[23:49:47] wrote /Users/ahmade/Documents/rv_estimator/data/polygon_universe.csv  (16,516 tickers)
+[23:49:47] [log] build-universe finished OK in 49.1s

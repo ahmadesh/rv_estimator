@@ -1,0 +1,93 @@
+[14:07:38] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T140738_polygon_reference.log
+[14:07:38] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py reference --workers 12
+[14:07:38] [exchanges] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/reference/exchanges.parquet  (27 rows)
+[14:07:38] [ticker_types] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/reference/ticker_types.parquet  (24 rows)
+[14:07:38] [market_holidays] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/reference/market_holidays.parquet  (24 rows)
+[14:07:40]   active=true: 12,649 tickers
+[14:07:43]   active=false: 23,100 tickers
+[14:07:43] [all_tickers] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/reference/all_tickers.parquet  (35,749 rows)
+[14:07:43] [overview] 16516 to fetch  (skipping 0 done/empty/unavailable)
+[14:07:45]   [overview] 200/16516 processed
+[14:07:46]   [overview] 400/16516 processed
+[14:07:48]   [overview] 600/16516 processed
+[14:07:49]   [overview] 800/16516 processed
+[14:07:51]   [overview] 1000/16516 processed
+[14:07:52]   [overview] 1200/16516 processed
+[14:07:54]   [overview] 1400/16516 processed
+[14:07:55]   [overview] 1600/16516 processed
+[14:07:57]   [overview] 1800/16516 processed
+[14:07:58]   [overview] 2000/16516 processed
+[14:08:00]   [overview] 2200/16516 processed
+[14:08:01]   [overview] 2400/16516 processed
+[14:08:03]   [overview] 2600/16516 processed
+[14:08:04]   [overview] 2800/16516 processed
+[14:08:06]   [overview] 3000/16516 processed
+[14:08:07]   [overview] 3200/16516 processed
+[14:08:09]   [overview] 3400/16516 processed
+[14:08:10]   [overview] 3600/16516 processed
+[14:08:12]   [overview] 3800/16516 processed
+[14:08:13]   [overview] 4000/16516 processed
+[14:08:15]   [overview] 4200/16516 processed
+[14:08:16]   [overview] 4400/16516 processed
+[14:08:18]   [overview] 4600/16516 processed
+[14:08:20]   [overview] 4800/16516 processed
+[14:08:21]   [overview] 5000/16516 processed
+[14:08:23]   [overview] 5200/16516 processed
+[14:08:24]   [overview] 5400/16516 processed
+[14:08:26]   [overview] 5600/16516 processed
+[14:08:27]   [overview] 5800/16516 processed
+[14:08:29]   [overview] 6000/16516 processed
+[14:08:30]   [overview] 6200/16516 processed
+[14:08:32]   [overview] 6400/16516 processed
+[14:08:33]   [overview] 6600/16516 processed
+[14:08:35]   [overview] 6800/16516 processed
+[14:08:36]   [overview] 7000/16516 processed
+[14:08:44]   [overview] 7200/16516 processed
+[14:08:53]   [overview] 7400/16516 processed
+[14:09:02]   [overview] 7600/16516 processed
+[14:09:10]   [overview] 7800/16516 processed
+[14:09:12]   [overview] 8000/16516 processed
+[14:09:13]   [overview] 8200/16516 processed
+[14:09:15]   [overview] 8400/16516 processed
+[14:09:16]   [overview] 8600/16516 processed
+[14:09:18]   [overview] 8800/16516 processed
+[14:09:20]   [overview] 9000/16516 processed
+[14:09:22]   [overview] 9200/16516 processed
+[14:09:23]   [overview] 9400/16516 processed
+[14:09:25]   [overview] 9600/16516 processed
+[14:09:27]   [overview] 9800/16516 processed
+[14:09:29]   [overview] 10000/16516 processed
+[14:09:30]   [overview] 10200/16516 processed
+[14:09:32]   [overview] 10400/16516 processed
+[14:09:33]   [overview] 10600/16516 processed
+[14:09:35]   [overview] 10800/16516 processed
+[14:09:37]   [overview] 11000/16516 processed
+[14:09:38]   [overview] 11200/16516 processed
+[14:09:40]   [overview] 11400/16516 processed
+[14:09:41]   [overview] 11600/16516 processed
+[14:09:43]   [overview] 11800/16516 processed
+[14:09:45]   [overview] 12000/16516 processed
+[14:09:46]   [overview] 12200/16516 processed
+[14:09:48]   [overview] 12400/16516 processed
+[14:09:49]   [overview] 12600/16516 processed
+[14:09:51]   [overview] 12800/16516 processed
+[14:09:53]   [overview] 13000/16516 processed
+[14:09:54]   [overview] 13200/16516 processed
+[14:09:56]   [overview] 13400/16516 processed
+[14:09:57]   [overview] 13600/16516 processed
+[14:09:59]   [overview] 13800/16516 processed
+[14:10:01]   [overview] 14000/16516 processed
+[14:10:02]   [overview] 14200/16516 processed
+[14:10:04]   [overview] 14400/16516 processed
+[14:10:06]   [overview] 14600/16516 processed
+[14:10:07]   [overview] 14800/16516 processed
+[14:10:09]   [overview] 15000/16516 processed
+[14:10:12]   [overview] 15200/16516 processed
+[14:10:14]   [overview] 15400/16516 processed
+[14:10:15]   [overview] 15600/16516 processed
+[14:10:17]   [overview] 15800/16516 processed
+[14:10:19]   [overview] 16000/16516 processed
+[14:10:21]   [overview] 16200/16516 processed
+[14:10:22]   [overview] 16400/16516 processed
+[14:10:23]   [overview] /Users/ahmade/Documents/rv_estimator/polygon_parquet/reference/overview.parquet now has 9,586 rows
+[14:10:23] [log] reference finished OK in 165.7s

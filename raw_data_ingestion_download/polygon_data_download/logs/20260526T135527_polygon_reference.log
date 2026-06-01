@@ -1,0 +1,116 @@
+[13:55:27] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T135527_polygon_reference.log
+[13:55:27] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py reference --datasets overview --workers 12
+[13:55:27] [overview] 16516 to fetch  (skipping 0 done/empty)
+[13:55:29]   [overview] 200/16516 processed
+[13:55:31]   [overview] 400/16516 processed
+[13:55:33]   [overview] 600/16516 processed
+[13:55:34]   [overview] 800/16516 processed
+[13:55:36]   [overview] 1000/16516 processed
+[13:55:37]   [overview] 1200/16516 processed
+[13:55:39]   [overview] 1400/16516 processed
+[13:55:41]   [overview] 1600/16516 processed
+[13:55:42]   FAILED overview BF_A: HTTP 400: {"status":"ERROR","request_id":"f83823edfa6c85b31fafe312180a8bab","error":"Invalid ticker: BF_A"}
+[13:55:42]   FAILED overview BF_B: HTTP 400: {"status":"ERROR","request_id":"0f6056e11549d5eb9d4d87def552ada2","error":"Invalid ticker: BF_B"}
+[13:55:42]   [overview] 1800/16516 processed
+[13:55:44]   [overview] 2000/16516 processed
+[13:55:45]   FAILED overview BRK_B: HTTP 400: {"status":"ERROR","request_id":"e80fa4e4223ca9fee39e5bb9df898ba3","error":"Invalid ticker: BRK_B"}
+[13:55:46]   [overview] 2200/16516 processed
+[13:55:47]   [overview] 2400/16516 processed
+[13:55:49]   FAILED overview CBS_A: HTTP 400: {"status":"ERROR","request_id":"3a15db86d12fb6593d0ab3e90646c3a7","error":"Invalid ticker: CBS_A"}
+[13:55:49]   [overview] 2600/16516 processed
+[13:55:51]   [overview] 2800/16516 processed
+[13:55:52]   [overview] 3000/16516 processed
+[13:55:54]   [overview] 3200/16516 processed
+[13:55:55]   FAILED overview CRD_A: HTTP 400: {"status":"ERROR","request_id":"c19040cff097db21f6190d3ae63d3391","error":"Invalid ticker: CRD_A"}
+[13:55:55]   [overview] 3400/16516 processed
+[13:55:57]   [overview] 3600/16516 processed
+[13:55:59]   FAILED overview C_BEN: HTTP 400: {"status":"ERROR","request_id":"7de5684b0002684e19ddb79659a717b3","error":"Invalid ticker: C_BEN"}
+[13:55:59]   FAILED overview C_CORE: HTTP 400: {"status":"ERROR","request_id":"4fe1fcef2d028ebacc48f1dec83d2ca1","error":"Invalid ticker: C_CORE"}
+[13:55:59]   FAILED overview C_BLS: HTTP 400: {"status":"ERROR","request_id":"fa97d2af32c1086dc5b4b2b4c0ee86ac","error":"Invalid ticker: C_BLS"}
+[13:55:59]   FAILED overview C_NRE: HTTP 400: {"status":"ERROR","request_id":"dbe3fa2ed5ed562a26545bd4f1a3cefd","error":"Invalid ticker: C_NRE"}
+[13:55:59]   [overview] 3800/16516 processed
+[13:56:01]   [overview] 4000/16516 processed
+[13:56:03]   [overview] 4200/16516 processed
+[13:56:04]   [overview] 4400/16516 processed
+[13:56:05]   FAILED overview EBR_B: HTTP 400: {"status":"ERROR","request_id":"46f4afd1f212dd1f479b5889d31de04f","error":"Invalid ticker: EBR_B"}
+[13:56:06]   [overview] 4600/16516 processed
+[13:56:08]   [overview] 4800/16516 processed
+[13:56:09]   [overview] 5000/16516 processed
+[13:56:11]   [overview] 5200/16516 processed
+[13:56:12]   FAILED overview FCE_A: HTTP 400: {"status":"ERROR","request_id":"7ce7d1b56afdf35ccaa18bf6309db8e3","error":"Invalid ticker: FCE_A"}
+[13:56:13]   [overview] 5400/16516 processed
+[13:56:14]   [overview] 5600/16516 processed
+[13:56:16]   [overview] 5800/16516 processed
+[13:56:18]   [overview] 6000/16516 processed
+[13:56:19]   [overview] 6200/16516 processed
+[13:56:21]   [overview] 6400/16516 processed
+[13:56:23]   [overview] 6600/16516 processed
+[13:56:24]   [overview] 6800/16516 processed
+[13:56:24]   FAILED overview HEI_A: HTTP 400: {"status":"ERROR","request_id":"fe0217234b0a0f836378a4acd59ba85f","error":"Invalid ticker: HEI_A"}
+[13:56:26]   [overview] 7000/16516 processed
+[13:56:27]   FAILED overview HUB_B: HTTP 400: {"status":"ERROR","request_id":"351e056add95500c08529d3e6b25584e","error":"Invalid ticker: HUB_B"}
+[13:56:28]   [overview] 7200/16516 processed
+[13:56:29]   [overview] 7400/16516 processed
+[13:56:31]   [overview] 7600/16516 processed
+[13:56:32]   [overview] 7800/16516 processed
+[13:56:34]   [overview] 8000/16516 processed
+[13:56:36]   [overview] 8200/16516 processed
+[13:56:37]   FAILED overview JW_A: HTTP 400: {"status":"ERROR","request_id":"94a48f7759cd648c4da578eeb482d895","error":"Invalid ticker: JW_A"}
+[13:56:38]   [overview] 8400/16516 processed
+[13:56:39]   [overview] 8600/16516 processed
+[13:56:41]   FAILED overview LGF_A: HTTP 400: {"status":"ERROR","request_id":"ae2200ec91d3e7ffecd55ba008d10b77","error":"Invalid ticker: LGF_A"}
+[13:56:41]   FAILED overview LGF_B: HTTP 400: {"status":"ERROR","request_id":"6ab295b1f564ed8c79adf7303bed3d4c","error":"Invalid ticker: LGF_B"}
+[13:56:41]   [overview] 8800/16516 processed
+[13:56:43]   [overview] 9000/16516 processed
+[13:56:44]   [overview] 9200/16516 processed
+[13:56:46]   [overview] 9400/16516 processed
+[13:56:47]   [overview] 9600/16516 processed
+[13:56:48]   FAILED overview MOG_A: HTTP 400: {"status":"ERROR","request_id":"71d01351946a02e95775754b2ca3e439","error":"Invalid ticker: MOG_A"}
+[13:56:49]   [overview] 9800/16516 processed
+[13:56:52] [log] reference FAILED after 84.8s: KeyboardInterrupt: 
+[13:56:52] Traceback (most recent call last):
+[13:56:52]   File "/Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py", line 361, in run_per_ticker_single_file
+[13:56:52]     for fut in as_completed(futs):
+[13:56:52]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 245, in as_completed
+[13:56:52]     waiter.event.wait(wait_timeout)
+[13:56:52]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/threading.py", line 574, in wait
+[13:56:52]     signaled = self._cond.wait(timeout)
+[13:56:52]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/threading.py", line 312, in wait
+[13:56:52]     waiter.acquire()
+[13:56:52] KeyboardInterrupt
+
+[13:56:52] During handling of the above exception, another exception occurred:
+
+[13:56:52] Traceback (most recent call last):
+[13:56:52]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+[13:56:52]     return _run_code(code, main_globals, None,
+[13:56:52]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 87, in _run_code
+[13:56:52]     exec(code, run_globals)
+[13:56:52]   File "/Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py", line 669, in <module>
+[13:56:52]     main()
+[13:56:52]   File "/Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py", line 658, in main
+[13:56:52]     args.func(args)
+[13:56:52]   File "/Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py", line 460, in cmd_reference
+[13:56:52]     run_per_ticker_single_file(
+[13:56:52]   File "/Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py", line 372, in run_per_ticker_single_file
+[13:56:52]     print(f"  [{dataset}] {done}/{len(todo)} processed")
+[13:56:52]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 636, in __exit__
+[13:56:52]     self.shutdown(wait=True)
+[13:56:52]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py", line 229, in shutdown
+[13:56:52]     t.join()
+[13:56:52]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/threading.py", line 1053, in join
+[13:56:52]     self._wait_for_tstate_lock()
+[13:56:52]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/threading.py", line 1069, in _wait_for_tstate_lock
+[13:56:52]     elif lock.acquire(block, timeout):
+[13:56:52] KeyboardInterrupt
+[13:56:53] Exception ignored in: <module 'threading' from '/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/threading.py'>
+[13:56:53] Traceback (most recent call last):
+[13:56:53]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/threading.py", line 1435, in _shutdown
+[13:56:53]     atexit_call()
+[13:56:53]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py", line 31, in _python_exit
+[13:56:53]     t.join()
+[13:56:53]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/threading.py", line 1053, in join
+[13:56:53]     self._wait_for_tstate_lock()
+[13:56:53]   File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/threading.py", line 1069, in _wait_for_tstate_lock
+[13:56:53]     elif lock.acquire(block, timeout):
+[13:56:53] KeyboardInterrupt: 

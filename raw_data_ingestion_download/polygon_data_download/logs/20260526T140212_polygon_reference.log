@@ -1,0 +1,5 @@
+[14:02:12] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T140212_polygon_reference.log
+[14:02:12] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py reference --datasets overview --tickers BF_A BRK_B C_BEN --workers 3
+[14:02:12] [overview] 3 to fetch  (skipping 0 done/empty)
+[14:02:12]   [overview] wrote /Users/ahmade/Documents/rv_estimator/polygon_parquet/reference/overview.parquet  (2 rows)
+[14:02:12] [log] reference finished OK in 0.4s

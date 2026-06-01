@@ -1,0 +1,5 @@
+[13:58:18] [log] writing to /Users/ahmade/Documents/rv_estimator/polygon_data_download/logs/20260526T135818_polygon_reference.log
+[13:58:18] [log] argv: /Users/ahmade/Documents/rv_estimator/polygon_data_download/download.py reference --datasets overview --tickers AAPL MSFT VIX --workers 3
+[13:58:18] [overview] 1 to fetch  (skipping 2 done/empty)
+[13:58:19]   [overview] no new rows
+[13:58:19] [log] reference finished OK in 0.4s
