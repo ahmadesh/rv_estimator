@@ -1,10 +1,10 @@
 # RV Forecasting — Model Build & Evaluation Guide
 
-> **Audience.** This document is a build-and-run guide for a *swarm* of LLM workers. Each worker takes one numbered model from §4, implements it, trains it via the existing walk-forward harness, and writes its predictions to disk. Each worker also writes a small model card with self-only stats. **Workers do not invoke `evaluator.py`.** Comparison of the resulting predictions is a separate coordinator pass run once after the swarm — see **`COMPARISON_PLAN.md`**. **No accept/reject judgment is made here** — that comes later from the comparison report.
+> **Audience.** This document is a build-and-run guide for a *swarm* of LLM workers. Each worker takes one numbered model from §4, implements it, trains it via the existing walk-forward harness, and writes its predictions to disk. Each worker also writes a small model card with self-only stats. **Workers do not invoke `evaluator.py`.** Comparison of the resulting predictions is a separate coordinator pass run once after the swarm — see **`planning_docs/execution/COMPARISON_PLAN.md`**. **No accept/reject judgment is made here** — that comes later from the comparison report.
 >
 > **Starting state.** Predictions and reports have been cleared — the swarm starts from scratch. No model (not even the reference benchmarks) has trained predictions on disk; every model 0–12 must be *run* to populate `execution/data/predictions/`. The benchmark *classes* (0–3) already exist in `rv_eval/model_contract.py`; the new candidates (4–12) must be written.
 >
-> **Why this split.** The `evaluator` is built end-to-end for cross-model scoring: every table (leaderboard, §9 status, DM matrix, MCS, Progression panel) is keyed by `model`. Running it on a single prediction file gives degenerate cross-model panels and (critically) a `no_baseline`/`rejected` §9 status because `status.assign()` (`metrics/status.py`) computes its baseline from the `HAR` row in the predictions set. Per-worker eval also writes to `registry.parquet` (append-only), which would corrupt the Progression panel that diffs against prior runs. So workers stop at `predictions/<name>.parquet` + a self-stats card, and a single final pass (`COMPARISON_PLAN.md`) does all comparison.
+> **Why this split.** The `evaluator` is built end-to-end for cross-model scoring: every table (leaderboard, §9 status, DM matrix, MCS, Progression panel) is keyed by `model`. Running it on a single prediction file gives degenerate cross-model panels and (critically) a `no_baseline`/`rejected` §9 status because `status.assign()` (`metrics/status.py`) computes its baseline from the `HAR` row in the predictions set. Per-worker eval also writes to `registry.parquet` (append-only), which would corrupt the Progression panel that diffs against prior runs. So workers stop at `predictions/<name>.parquet` + a self-stats card, and a single final pass (`planning_docs/execution/COMPARISON_PLAN.md`) does all comparison.
 
 ## 1. Context
 
@@ -14,7 +14,7 @@ This plan sits on top of the `rv_eval/` harness (see `README.md` §End-to-end fl
 - `walkforward.py` → drives any `Model` subclass via a purged + embargoed monthly-refit rolling-origin loop.
 - `evaluator.py --tier 2` → joins predictions to targets and emits `report.html / .md / metrics.json` + §9 status.
 
-The goal is to populate a **comprehensive sweep** of 13 models (4 reference benchmarks already coded + 9 new candidates to build) so the downstream comparison pass (`COMPARISON_PLAN.md`) can decide which work. Predictions start empty: every model must be run to generate its parquet. Each worker is independent — the models can be built in parallel.
+The goal is to populate a **comprehensive sweep** of 13 models (4 reference benchmarks already coded + 9 new candidates to build) so the downstream comparison pass (`planning_docs/execution/COMPARISON_PLAN.md`) can decide which work. Predictions start empty: every model must be run to generate its parquet. Each worker is independent — the models can be built in parallel.
 
 ## 2. Per-Worker Build Contract
 
@@ -38,9 +38,9 @@ A worker assigned model `N` performs exactly these steps:
        --out candidate_models/cards/<model-name>.md \
        --universe clean_core
    ```
-   `rv_eval.selfstats` produces only the per-model panels that are meaningful in isolation (Tier-1 by horizon / ticker / group, §5 IV-incremental skill, §6 conditional bias by IV bucket, §6 post-shock calibration). It does **not** write to `registry.parquet`, compute §9 status, or render leaderboard/DM/MCS panels — those are inherently cross-model and belong to the comparison pass (`COMPARISON_PLAN.md`). Run a second time with `--universe hard_cases --out candidate_models/cards/<model-name>.hard_cases.md` for the hard-cases card.
+   `rv_eval.selfstats` produces only the per-model panels that are meaningful in isolation (Tier-1 by horizon / ticker / group, §5 IV-incremental skill, §6 conditional bias by IV bucket, §6 post-shock calibration). It does **not** write to `registry.parquet`, compute §9 status, or render leaderboard/DM/MCS panels — those are inherently cross-model and belong to the comparison pass (`planning_docs/execution/COMPARISON_PLAN.md`). Run a second time with `--universe hard_cases --out candidate_models/cards/<model-name>.hard_cases.md` for the hard-cases card.
 9. **Augment the card** with the human-only fields from the template in §5 (features used, hyperparameters, train wall-time, device, convergence notes). Append them above the auto-generated sections written by `selfstats`.
-10. **Stop.** Do not modify other models or write any cross-model commentary. The comparison happens in the separate coordinator pass — see `COMPARISON_PLAN.md`.
+10. **Stop.** Do not modify other models or write any cross-model commentary. The comparison happens in the separate coordinator pass — see `planning_docs/execution/COMPARISON_PLAN.md`.
 
 ### Output schema (must match exactly)
 
@@ -166,7 +166,7 @@ Models 0–7 have **no free hyperparameters** (RW/EWMA are fixed; EWMA's λ=0.94
 | 8 R-GARCH | none (params via MLE) | HHS(2012) spec; fall back to GARCH(1,1) on non-convergence | — |
 
 ### Optional stretch — ViT on IV surface
-Out of scope for this swarm. Defer until the comparison pass (`COMPARISON_PLAN.md`) motivates it.
+Out of scope for this swarm. Defer until the comparison pass (`planning_docs/execution/COMPARISON_PLAN.md`) motivates it.
 
 ## 5. Model-Card Template (per model)
 
@@ -221,7 +221,7 @@ Each worker writes `candidate_models/cards/<model-name>.md` with the following s
 ```
 ```
 
-Per-model cards are deliberately self-contained: they make no claims about relative ranking against other models. That is the job of the comparison pass (`COMPARISON_PLAN.md`).
+Per-model cards are deliberately self-contained: they make no claims about relative ranking against other models. That is the job of the comparison pass (`planning_docs/execution/COMPARISON_PLAN.md`).
 
 ## 6. Reporting strategy — what the existing code forces
 
@@ -241,16 +241,16 @@ The user's question was whether each worker should evaluate-and-report and *then
 So per-worker `evaluator` invocation is wasteful (re-joins truth, re-renders empty cross-model panels) and actively harmful (registry pollution, false §9 status). The right architecture is:
 
 - **During swarm (§2–§5):** each worker builds + trains + writes predictions parquet + runs `python -m rv_eval.selfstats --pred ... --out cards/<name>.md` to produce a self-only card. No `evaluator.py`, no `registry.parquet`. The `selfstats` CLI emits exactly the panels listed above as "works for absolute numbers".
-- **After swarm (`COMPARISON_PLAN.md`):** one `evaluator.py` invocation reads all `predictions/*.parquet` together and produces the comparative report. This is the only place leaderboards, DM matrices, MCS, §9 status, and Progression are computed.
+- **After swarm (`planning_docs/execution/COMPARISON_PLAN.md`):** one `evaluator.py` invocation reads all `predictions/*.parquet` together and produces the comparative report. This is the only place leaderboards, DM matrices, MCS, §9 status, and Progression are computed.
 
 If a coordinator wants a partial leaderboard mid-swarm to monitor progress, running `evaluator --tier 1 --no-registry --out /tmp/peek` at any time is safe — `--no-registry` avoids polluting the Progression diff, `--tier 1` skips the expensive DM/MCS pass. The evaluator now also warns to stderr when the HAR baseline is missing from the predictions set, and `metrics/status.py` returns `status="no_baseline"` rather than silently mass-rejecting every model.
 
-## 7. Final Comparison Step → moved to `COMPARISON_PLAN.md`
+## 7. Final Comparison Step → moved to `planning_docs/execution/COMPARISON_PLAN.md`
 
 The cross-model comparison of predictions (the single coordinator `evaluator` pass: §9 status,
 QLIKE leaderboard, §5 IV-incremental skill, §6 conditional bias, Diebold-Mariano, Model Confidence
 Set, Progression) is **out of scope for the swarm** and now lives in its own guide:
-**`COMPARISON_PLAN.md`**. Run it once, after every model 0–12 has written its predictions. **No
+**`planning_docs/execution/COMPARISON_PLAN.md`**. Run it once, after every model 0–12 has written its predictions. **No
 selection is made by the swarm** — those reports are the input to a separate human/LLM review.
 
 ## 8. OOS Hygiene (applies to every worker)
