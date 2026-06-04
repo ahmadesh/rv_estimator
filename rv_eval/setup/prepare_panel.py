@@ -35,6 +35,8 @@ INPUT_COLS = [
     "iv_30d", "iv_60d", "iv_90d", "iv_slope", "skew_25d", "ext_vol",
     # systematic regime
     "vix", "vix3m", "vix_slope", "vvix",
+    "vix9d", "vix9d_slope",
+    "credit_spread", "credit_mom", "usd_mom", "rates_mom",
     # quality
     "bar_count", "session", "well_behaved",
 ]

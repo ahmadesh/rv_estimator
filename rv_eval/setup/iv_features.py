@@ -113,13 +113,34 @@ def iv_features(ticker: str) -> pl.DataFrame:
 
 
 def systematic_features() -> pl.DataFrame:
-    """Market-wide regime series from SPX (VIX/VIX3M) and VIX (VVIX-like) chains, keyed by date."""
+    """Market-wide regime series, keyed by date.
+
+      vix / vix3m / vix_slope   SPX 30d / 90d ATM IV and their slope.
+      vix9d / vix9d_slope       SPX 9d ATM IV (short end) and 9d-30d slope
+                                (negative = front-end backwardation / stress).
+      vvix                      VIX 30d ATM IV (vol-of-vol).
+      credit_spread / credit_mom / usd_mom / rates_mom
+                                cross-asset regime proxies (see cross_asset.py).
+    """
+    from rv_eval.setup.cross_asset import cross_asset_features
+
     spx = iv_features("SPX").select(
         "date", pl.col("iv_30d").alias("vix"), pl.col("iv_90d").alias("vix3m"),
         pl.col("iv_slope").alias("vix_slope"),
     )
-    vix = iv_features("VIX").select("date", pl.col("iv_30d").alias("vvix"))
-    return spx.join(vix, on="date", how="full", coalesce=True).sort("date")
+    # Short-end VIX: interpolate the SPX ATM term curve to 9 days (reuses the IV machinery).
+    spx_atm = _atm_term_points(_load_chain("SPX"))
+    vix9d = _interp(spx_atm, "atm_vol", 9, "vix9d").rename({"trade_date": "date"})
+    vvix = iv_features("VIX").select("date", pl.col("iv_30d").alias("vvix"))
+
+    out = (
+        spx.join(vix9d, on="date", how="full", coalesce=True)
+        .join(vvix, on="date", how="full", coalesce=True)
+        .join(cross_asset_features(), on="date", how="left")
+        .with_columns(vix9d_slope=pl.col("vix9d") - pl.col("vix"))
+        .sort("date")
+    )
+    return out
 
 
 if __name__ == "__main__":

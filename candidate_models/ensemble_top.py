@@ -26,16 +26,26 @@ import polars as pl
 from rv_eval import config as C
 from rv_eval.model_contract import Model, _lognormal_quantiles
 
-# The 8 non-baseline candidates (MODEL_PLAN §4 models 4-11). Hard-coded by design.
+# Top-K components, refined from the comparison pass (MODEL_PLAN §4.12: "all candidates"
+# was a temporary first-swarm default, "refined after the comparison").
+#
+# The first pass equal-weighted ALL 8 non-baseline candidates (models 4-11). Because the
+# combination is an *arithmetic* mean of rv_hat in level space, the two candidates whose
+# forecasts blow up — RealizedGARCH (rv_hat up to ~1e21 at h=42) and GuyonLekeufackPDV —
+# dragged the ensemble mean to ~1e18, scoring it worse than RandomWalk. Both are also the
+# two worst standalone candidates by pooled QLIKE on *both* universes (RealizedGARCH ~2.6/3.6,
+# PDV ~0.54/1.39 vs ~0.29-0.33 for the rest), so they are excluded, not just clipped.
+#
+# What remains is the genuine top-K: the four candidates that are tightly clustered at the
+# top of the pooled-QLIKE ranking across clean_core AND hard_cases (all ~0.29-0.32). XGBHARRSIV
+# and LSTMRV are dropped too — they survive (no blow-up) but trail the HAR-family four by a
+# clear margin (~0.32-0.36) on both universes, so including them only dilutes the combiner.
+# Baselines (HAR, HAR-X, RW, EWMA) are excluded by design — the ensemble combines candidates.
 COMPONENTS: list[str] = [
+    "HAR-RS-IV-Q",
     "HARQ",
     "HAR-RS",
     "HAR-CJ",
-    "HAR-RS-IV-Q",
-    "RealizedGARCH",
-    "XGBHARRSIV",
-    "LSTMRV",
-    "GuyonLekeufackPDV",
 ]
 
 # Minimum number of components that must have a prediction for a key to keep it.
