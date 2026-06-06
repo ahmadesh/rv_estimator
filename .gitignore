@@ -13,5 +13,7 @@ polygon_parquet/
 # rv_eval evaluator: staged raw subset, derived panels, run outputs (large/regenerable)
 execution/data/
 execution/reports/
+# trade_eval Stage-1 backtest results (large/regenerable from frozen predictions)
+trade_eval/results/
 __pycache__/
 .pytest_cache/

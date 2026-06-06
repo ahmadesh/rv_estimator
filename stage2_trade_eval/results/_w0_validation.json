@@ -1,0 +1,138 @@
+{
+  "worker": "W0",
+  "slice": "Engine hardening & leakage battery (blocks all downstream run-workers)",
+  "generated": "2026-06-05",
+  "venv": ".venv/bin/python",
+  "pytest_summary": "15 passed in 0.39s (full stage2_trade_eval/tests); 10 passed (test_leakage.py alone)",
+  "tests_file_added": "stage2_trade_eval/tests/test_leakage.py",
+
+  "leakage_checks": [
+    {
+      "id": 1,
+      "name": "PIT invariance",
+      "tests": [
+        "test_pit_invariance_trailing_pctile",
+        "test_pit_invariance_gate_surface"
+      ],
+      "asserts": "appending a future-dated row leaves every PAST trailing-pctile value and the full build_signals gate stat surface (disp_p80/disp_p33/disp_p67) + resulting gate + size byte-identical",
+      "result": "pass"
+    },
+    {
+      "id": 2,
+      "name": "Entry locality",
+      "tests": ["test_entry_locality[SPY]", "test_entry_locality[QQQ]"],
+      "asserts": "open_trade reads ONLY the entry-date EOD chain; a chains.day_chain spy records zero accesses to any trade_date > entry_date",
+      "result": "pass"
+    },
+    {
+      "id": 3,
+      "name": "Mark locality",
+      "tests": ["test_mark_locality[SPY]", "test_mark_locality[QQQ]"],
+      "asserts": "day-k mark reads only day-k chain; settlement reads only the expiry chain; re-marking each path prefix leaves the day-k mtm unchanged (causal marking, no look-ahead)",
+      "result": "pass"
+    },
+    {
+      "id": 4,
+      "name": "Causal stopping",
+      "tests": ["test_causal_stopping_all_arms", "test_causal_stopping_on_real_path"],
+      "asserts": "for every ManagementArm (hold/forecast_regate/mechanical_terminal/iv_regate) and every constructed + real-ORATS exit, arm.exit_on returns the identical (k, reason) when the path is truncated at that k; decision uses no row after the exit day",
+      "result": "pass"
+    },
+    {
+      "id": 5,
+      "name": "Decision-context purity",
+      "tests": ["test_decision_context_excludes_target_var", "test_engine_ctx_never_carries_target_var"],
+      "asserts": "engine never places target_var (the realized [t,t+h] payoff) into ctx.signal; an EntryContext spy over a real SPY 2020 cell confirms no decision context ever carries target_var; ledger still records target_var (booked from the entry row, schema intact). A runtime assert guard was added in engine._run_one_trade.",
+      "result": "pass"
+    }
+  ],
+
+  "bugs_fixed": [
+    "None — no decision-semantics or LEDGER-schema bugs surfaced; engine/marks/management produced correct, leakage-safe, identity-holding results on real ORATS as written."
+  ],
+  "changes_non_semantic": [
+    "engine.py: added a runtime assert guard ('target_var' not in ctx.signal) at EntryContext construction (L2 leakage guard; no semantic change).",
+    "chains.py: added @lru_cache(maxsize=8192) to day_chain so repeated leg relocations on the same (ticker, trade_date) reuse one filter instead of re-filtering the ticker-year per leg (perf only; results bit-identical, SPY full-OOS pnl unchanged at -212.26)."
+  ],
+
+  "strike_and_settlement_validation": {
+    "method": "Recomputed by-|delta| strike selection directly from raw ORATS (ticker=<T>/year=<Y>/data.parquet, delta=call delta, put delta=delta-1) and compared to engine structure.legs; validated held-to-expiry settlement = credit - net intrinsic on the actual expiry chain.",
+    "short_delta_target": 0.20,
+    "wing_delta_target": 0.07,
+    "cases": [
+      {
+        "ticker": "SPY", "entry_date": "2020-06-01", "expiry": "2020-07-01", "dte": 30,
+        "spot_entry": 305.65, "spot_expiry": 311.71,
+        "legs": [
+          {"right": "P", "strike": 265.0, "qty": 1, "abs_delta": 0.0724},
+          {"right": "P", "strike": 285.0, "qty": -1, "abs_delta": 0.2038},
+          {"right": "C", "strike": 319.0, "qty": -1, "abs_delta": 0.2068},
+          {"right": "C", "strike": 330.0, "qty": 1, "abs_delta": 0.0649}
+        ],
+        "credit": 3.35, "width": 20.0, "max_loss": 16.65,
+        "settlement_leg_val": 3.35, "net_intrinsic": 0.0,
+        "credit_minus_intrinsic": 3.35, "identity_holds": true,
+        "note": "OTM at expiry -> settlement == full credit"
+      },
+      {
+        "ticker": "QQQ", "entry_date": "2021-03-01", "expiry": "2021-03-31", "dte": 30,
+        "spot_entry": 323.32, "spot_expiry": 319.61,
+        "legs": [
+          {"right": "P", "strike": 274.0, "qty": 1, "abs_delta": 0.0687},
+          {"right": "P", "strike": 300.0, "qty": -1, "abs_delta": 0.1986},
+          {"right": "C", "strike": 340.0, "qty": -1, "abs_delta": 0.2068},
+          {"right": "C", "strike": 354.0, "qty": 1, "abs_delta": 0.0698}
+        ],
+        "credit": 3.89, "width": 26.0, "max_loss": 22.11,
+        "settlement_leg_val": 3.89, "net_intrinsic": 0.0,
+        "credit_minus_intrinsic": 3.89, "identity_holds": true,
+        "note": "OTM at expiry -> settlement == full credit"
+      },
+      {
+        "ticker": "SPY", "entry_date": "2020-02-18", "expiry": "2020-03-20", "dte": 31,
+        "spot_entry": 336.73, "spot_expiry": 231.42,
+        "legs": [
+          {"right": "P", "strike": 312.0, "qty": 1, "abs_delta": 0.0711},
+          {"right": "P", "strike": 324.0, "qty": -1, "abs_delta": 0.2020},
+          {"right": "C", "strike": 345.0, "qty": -1, "abs_delta": 0.1997},
+          {"right": "C", "strike": 349.0, "qty": 1, "abs_delta": 0.0778}
+        ],
+        "credit": 1.74, "width": 12.0, "max_loss": 10.26,
+        "settlement_leg_val": -10.26, "net_intrinsic": -12.0,
+        "credit_minus_intrinsic": -10.26, "identity_holds": true,
+        "note": "COVID-crash entry; spot crashed below both put strikes -> settlement = credit - width = -max_loss (loss correctly capped at defined risk)"
+      }
+    ],
+    "summary": "Short-leg |delta| matches SHORT_DELTA=0.20 (engine 0.199-0.207) and wings match WING_DELTA=0.07 (engine 0.065-0.078) on SPY+QQQ across calm and crash expiries; held-to-expiry settlement == credit - net intrinsic on the actual chain in all 3 cases (incl. a capped-loss ITM case)."
+  },
+
+  "performance": {
+    "profile_method": "cProfile on a 5-name (SPY,QQQ,IWM,XLK,XLF) h22 iron_condor/hold/none full-OOS run; bottleneck was relocate -> day_chain -> polars filter (~11.9k filter calls).",
+    "optimization": "memoized chains.day_chain per (ticker, trade_date) via lru_cache (leg relocations on the same day now share one filter).",
+    "wallclock_per_1000_trades": {
+      "spy_full_oos_before": 39.5,
+      "five_name_before": 41.3,
+      "five_name_after": 25.7,
+      "ten_name_core_cell_after": 24.5
+    },
+    "ten_name_full_oos_cell_seconds": 2.5,
+    "ten_name_full_oos_trades": 102,
+    "tractability": "A 10-name x multi-structure OOS sweep is tractable: a single 10-name cell is ~2.5s / ~24.5s per 1000 trades; e.g. 5 structures x 4 management x 3 hedge = 60 cells ~ a few minutes."
+  },
+
+  "dry_run": {
+    "command": ".venv/bin/python -m stage2_trade_eval.run --models EnsembleTopK --structures iron_condor --management hold --hedge none --horizons 22",
+    "scope": "engine restricts to the 10-name CLEAN_CORE universe (no single-name CLI flag); ran the full core universe as built.",
+    "result": "completed: EnsembleTopK h=22 iron_condor__hold__none -> 102 trades, 51 portfolio days, 2.5s cell wallclock",
+    "outputs_written": [
+      "stage2_trade_eval/results/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+      "stage2_trade_eval/results/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+      "stage2_trade_eval/results/manifest.parquet"
+    ]
+  },
+
+  "artifacts_written": [
+    "stage2_trade_eval/tests/test_leakage.py",
+    "stage2_trade_eval/results/_w0_validation.json"
+  ]
+}

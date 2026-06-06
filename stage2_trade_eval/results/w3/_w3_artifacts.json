@@ -1,0 +1,219 @@
+{
+  "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3",
+  "cells": 24,
+  "ledgers": [
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__forecast_regate__full_band.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__forecast_regate__none.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__forecast_regate__terminal_band.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__hold__full_band.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__hold__terminal_band.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__iv_regate__full_band.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__iv_regate__none.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__iv_regate__terminal_band.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__mechanical_terminal__full_band.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__mechanical_terminal__none.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__iron_condor__mechanical_terminal__terminal_band.parquet",
+      "rows": 102
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__forecast_regate__full_band.parquet",
+      "rows": 160
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__forecast_regate__none.parquet",
+      "rows": 160
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__forecast_regate__terminal_band.parquet",
+      "rows": 160
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__hold__full_band.parquet",
+      "rows": 160
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__hold__none.parquet",
+      "rows": 160
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__hold__terminal_band.parquet",
+      "rows": 160
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__iv_regate__full_band.parquet",
+      "rows": 160
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__iv_regate__none.parquet",
+      "rows": 160
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__iv_regate__terminal_band.parquet",
+      "rows": 160
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__mechanical_terminal__full_band.parquet",
+      "rows": 160
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__mechanical_terminal__none.parquet",
+      "rows": 160
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/ledger/EnsembleTopK__h22__short_strangle__mechanical_terminal__terminal_band.parquet",
+      "rows": 160
+    }
+  ],
+  "portfolios": [
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__forecast_regate__full_band.parquet",
+      "rows": 80
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__forecast_regate__none.parquet",
+      "rows": 80
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__forecast_regate__terminal_band.parquet",
+      "rows": 80
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__hold__full_band.parquet",
+      "rows": 51
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+      "rows": 51
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__hold__terminal_band.parquet",
+      "rows": 51
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__iv_regate__full_band.parquet",
+      "rows": 78
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__iv_regate__none.parquet",
+      "rows": 78
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__iv_regate__terminal_band.parquet",
+      "rows": 78
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__mechanical_terminal__full_band.parquet",
+      "rows": 74
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__mechanical_terminal__none.parquet",
+      "rows": 74
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__iron_condor__mechanical_terminal__terminal_band.parquet",
+      "rows": 74
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__forecast_regate__full_band.parquet",
+      "rows": 118
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__forecast_regate__none.parquet",
+      "rows": 118
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__forecast_regate__terminal_band.parquet",
+      "rows": 118
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__hold__full_band.parquet",
+      "rows": 68
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__hold__none.parquet",
+      "rows": 68
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__hold__terminal_band.parquet",
+      "rows": 68
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__iv_regate__full_band.parquet",
+      "rows": 115
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__iv_regate__none.parquet",
+      "rows": 115
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__iv_regate__terminal_band.parquet",
+      "rows": 115
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__mechanical_terminal__full_band.parquet",
+      "rows": 119
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__mechanical_terminal__none.parquet",
+      "rows": 119
+    },
+    {
+      "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/portfolio/EnsembleTopK__h22__short_strangle__mechanical_terminal__terminal_band.parquet",
+      "rows": 119
+    }
+  ],
+  "manifest": {
+    "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/manifest.parquet",
+    "rows": 24
+  },
+  "scorecard": {
+    "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/scorecard.parquet",
+    "rows": 24
+  },
+  "attribution": {
+    "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/attribution.parquet",
+    "rows": 0
+  },
+  "verdicts": {
+    "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/verdicts.parquet",
+    "rows": 24
+  },
+  "scoring_dump": {
+    "path": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w3/_scoring_dump.json"
+  }
+}

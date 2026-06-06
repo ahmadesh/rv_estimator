@@ -1,0 +1,496 @@
+{
+  "worker": "W5",
+  "milestone": "M5 / Part A tuning sweeps",
+  "window": {
+    "start": "2018-01-01",
+    "end": "2021-12-31"
+  },
+  "note": "ALL runs windowed to the 2018-2021 validation set (run.py --start/--end); the 2022-01->2026-05 held-out set was NEVER run or scored. No winner selected. Each sweep cell isolated in its own STAGE2_RESULTS_ROOT subdir under w5/ (env-var override pattern), each carrying its own option-space IV-only null (iron_condor) for attribution.",
+  "base_cell": "iron_condor__hold__none (defined-risk, hold-to-expiry, no hedge) at h=22",
+  "generated_utc": "2026-06-05T21:42:59+00:00",
+  "sweeps": {
+    "E1": {
+      "desc": "EnsembleTopK-v2 (frozen on disk) on the base defined-risk cell + IV-only null",
+      "knob": "model=EnsembleTopK-v2",
+      "subdirs": [
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e1",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e1/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e1/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e1/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e1/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK-v2",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e1/ledger/EnsembleTopK-v2__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e1/portfolio/EnsembleTopK-v2__h22__iron_condor__hold__none.parquet",
+              "n_trades": 73,
+              "n_port_days": 28
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e1/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e1/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 56,
+              "n_port_days": 24
+            }
+          ]
+        }
+      ]
+    },
+    "E2": {
+      "desc": "gate percentile sweep DISP_PCTILE in {0.70,0.75,0.80,0.85,0.90} on EnsembleTopK; env override TRADE_EVAL_DISP_PCTILE",
+      "knob": "TRADE_EVAL_DISP_PCTILE",
+      "subdirs": [
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p070",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p070/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p070/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p070/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p070/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p070/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p070/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 23,
+              "n_port_days": 14
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p070/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p070/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 55,
+              "n_port_days": 24
+            }
+          ],
+          "DISP_PCTILE": 0.7
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p075",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p075/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p075/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p075/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p075/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p075/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p075/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 25,
+              "n_port_days": 16
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p075/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p075/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 55,
+              "n_port_days": 24
+            }
+          ],
+          "DISP_PCTILE": 0.75
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p080",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p080/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p080/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p080/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p080/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p080/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p080/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 31,
+              "n_port_days": 21
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p080/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p080/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 55,
+              "n_port_days": 24
+            }
+          ],
+          "DISP_PCTILE": 0.8
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p085",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p085/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p085/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p085/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p085/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p085/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p085/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 35,
+              "n_port_days": 22
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p085/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p085/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 55,
+              "n_port_days": 24
+            }
+          ],
+          "DISP_PCTILE": 0.85
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p090",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p090/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p090/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p090/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p090/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p090/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p090/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 46,
+              "n_port_days": 23
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p090/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e2_p090/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 56,
+              "n_port_days": 24
+            }
+          ],
+          "DISP_PCTILE": 0.9
+        }
+      ]
+    },
+    "E3": {
+      "desc": "leakage-safe PIT sigma-recalibration overlay (monotone sigma'=a*sigma, a=trailing 90th pctile of |z| on residuals lagged by h+1=23 trading days) on EnsembleTopK; env flag STAGE2_E3_SIGMA_RECAL=1; overlay lives in contributing.py",
+      "knob": "STAGE2_E3_SIGMA_RECAL",
+      "subdirs": [
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e3",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e3/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e3/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e3/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e3/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e3/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e3/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 33,
+              "n_port_days": 19
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e3/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e3/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 56,
+              "n_port_days": 24
+            }
+          ]
+        }
+      ]
+    },
+    "E4": {
+      "desc": "Kelly c in {0.25,0.30,0.35} x SIZE_CAP in {2,3,4} (9 cells) on EnsembleTopK; env overrides STAGE2_KELLY_C_DEFINED, STAGE2_SIZE_CAP",
+      "knob": [
+        "STAGE2_KELLY_C_DEFINED",
+        "STAGE2_SIZE_CAP"
+      ],
+      "subdirs": [
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap2",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap2/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap2/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap2/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap2/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap2/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap2/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 31,
+              "n_port_days": 21
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap2/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap2/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 56,
+              "n_port_days": 24
+            }
+          ],
+          "KELLY_C_DEFINED": 0.25,
+          "SIZE_CAP": 2
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap3",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap3/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap3/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap3/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap3/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap3/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap3/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 31,
+              "n_port_days": 21
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap3/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap3/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 55,
+              "n_port_days": 24
+            }
+          ],
+          "KELLY_C_DEFINED": 0.25,
+          "SIZE_CAP": 3
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap4",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap4/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap4/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap4/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap4/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap4/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap4/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 31,
+              "n_port_days": 21
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap4/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c025_cap4/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 55,
+              "n_port_days": 24
+            }
+          ],
+          "KELLY_C_DEFINED": 0.25,
+          "SIZE_CAP": 4
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap2",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap2/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap2/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap2/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap2/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap2/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap2/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 31,
+              "n_port_days": 21
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap2/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap2/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 56,
+              "n_port_days": 24
+            }
+          ],
+          "KELLY_C_DEFINED": 0.3,
+          "SIZE_CAP": 2
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap3",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap3/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap3/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap3/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap3/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap3/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap3/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 31,
+              "n_port_days": 21
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap3/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap3/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 55,
+              "n_port_days": 24
+            }
+          ],
+          "KELLY_C_DEFINED": 0.3,
+          "SIZE_CAP": 3
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap4",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap4/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap4/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap4/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap4/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap4/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap4/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 31,
+              "n_port_days": 21
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap4/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c030_cap4/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 56,
+              "n_port_days": 24
+            }
+          ],
+          "KELLY_C_DEFINED": 0.3,
+          "SIZE_CAP": 4
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap2",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap2/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap2/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap2/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap2/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap2/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap2/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 31,
+              "n_port_days": 21
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap2/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap2/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 55,
+              "n_port_days": 24
+            }
+          ],
+          "KELLY_C_DEFINED": 0.35,
+          "SIZE_CAP": 2
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap3",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap3/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap3/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap3/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap3/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap3/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap3/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 31,
+              "n_port_days": 21
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap3/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap3/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 56,
+              "n_port_days": 24
+            }
+          ],
+          "KELLY_C_DEFINED": 0.35,
+          "SIZE_CAP": 3
+        },
+        {
+          "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap4",
+          "manifest": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap4/manifest.parquet",
+          "scorecard": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap4/scorecard.parquet",
+          "attribution": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap4/attribution.parquet",
+          "verdicts": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap4/verdicts.parquet",
+          "cells": [
+            {
+              "model": "EnsembleTopK",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap4/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap4/portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet",
+              "n_trades": 31,
+              "n_port_days": 21
+            },
+            {
+              "model": "IV-only",
+              "horizon": 22,
+              "ablation": "iron_condor__hold__none",
+              "ledger": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap4/ledger/IV-only__h22__iron_condor__hold__none.parquet",
+              "portfolio": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w5/e4_c035_cap4/portfolio/IV-only__h22__iron_condor__hold__none.parquet",
+              "n_trades": 55,
+              "n_port_days": 24
+            }
+          ],
+          "KELLY_C_DEFINED": 0.35,
+          "SIZE_CAP": 4
+        }
+      ]
+    }
+  },
+  "n_sweep_value_subdirs": 16
+}

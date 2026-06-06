@@ -1,0 +1,61 @@
+{
+  "run": "stage2-orchestration",
+  "model_policy": "all subagents Opus 4.8 (model=opus)",
+  "decisions": {
+    "run_mode": "fully_autonomous",
+    "dispatch": "parallel_background",
+    "sizing_knobs": "config_defaults",
+    "validation_split": "tune 2018-01..2021-12; hold out 2022-01..2026-05 + full OOS",
+    "credit_resume": "on usage-limit: checkpoint + ~4h resume; never ask user"
+  },
+  "dag": {
+    "W0": "engine hardening + 5-check leakage battery (BLOCKS W2-W5)",
+    "W1": "stage2 scoring adapter (parallel with W0)",
+    "W2": "M2 defined-risk core book (after W0,W1)",
+    "W3": "M3 management+hedge ablations (after W2)",
+    "W4": "M4 naked overlay (after W0,W1)",
+    "W5": "M5 tuning, VALIDATION WINDOW ONLY (after W0,W1)"
+  },
+  "infra": {
+    "results_isolation": "config.RESULTS_ROOT honors STAGE2_RESULTS_ROOT env (default unchanged); W2->results/w2, W4->results/w4, W5->results/w5 to avoid manifest/scorecard races during parallel runs",
+    "consolidation_TODO": "after W2+W3+W4 finish: orchestrator runs ONE consolidated full-OOS scoring pass over pooled W2/W3/W4 ledgers with global N_TRIALS (plan §D: deflate by total structures x mgmt x hedge). W5 (validation window) scored separately, never pooled with full-OOS."
+  },
+  "dispatched": ["W0", "W1", "W2", "W4", "W5"],
+  "completed": {
+    "W0": {
+      "artifacts": ["stage2_trade_eval/tests/test_leakage.py", "results/_w0_validation.json", "results/ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet", "results/manifest.parquet"],
+      "validated": "independently re-ran pytest: 15 passed (5 framework/smoke + 10 leakage); by-delta strikes & settlement validated vs raw ORATS; day_chain lru_cache (~24.5s/1000 trades); engine guard target_var not in ctx.signal",
+      "gate": "GREEN"
+    },
+    "W1": {
+      "module": "stage2_trade_eval/reports/score_stage2.py",
+      "artifacts": ["results/scorecard.parquet", "results/attribution.parquet", "results/verdicts.parquet"],
+      "validated": "files non-empty; DSR/CVaR/maxDD finite; N_TRIALS read live from manifest; benchmark=option-space IV-only",
+      "note": "dry-run smoke scorecard; will be overwritten by W2-W5 real scoring"
+    }
+  },
+  "completed_runs": {
+    "W2": {"cells": 9, "dir": "results/w2", "scorecard_rows": 9, "validated": "9+9 ledgers/portfolios; dsr/cvar finite; 3 IV-only benchmarks"},
+    "W4": {"cells": 16, "dir": "results/w4", "scorecard_rows": 16, "validated": "16+16 ledgers/portfolios; dsr/cvar finite; 8 IV-only benchmarks"},
+    "W3": {"cells": 24, "dir": "results/w3", "scorecard_rows": 24, "validated": "24+24 ledgers/portfolios; dsr/cvar finite; 4 mgmt arms x 3 hedge modes; attribution 0 (EnsembleTopK-only slice, no local IV-only)"}
+  },
+  "completed_runs_final": {
+    "W2": {"cells": 9, "dir": "results/w2"},
+    "W3": {"cells": 24, "dir": "results/w3"},
+    "W4": {"cells": 16, "dir": "results/w4"},
+    "W5": {"sweeps": "E1,E2x5,E3,E4x9 (16 subdirs)", "dir": "results/w5", "window": "2018-01..2021-12 ONLY", "max_entry_date": "2021-12-03", "guard": "--end>2021-12-31 aborts"}
+  },
+  "consolidated": {
+    "dir": "results/full_oos_consolidated",
+    "unique_cells": 44,
+    "n_trials_global": 44,
+    "benchmarks_iv_only": 11,
+    "attribution_rows": 33,
+    "validated": "44 rows, 0 null dsr/cvar, all unique, deflation=44"
+  },
+  "pending": [],
+  "status": "COMPLETE",
+  "next_action": "DONE. All of W0-W5 complete, every artifact verified on disk, RESULTS_INDEX.md finalized with row counts, headline consolidated full-OOS scorecard written. Held-out 2022-01..2026-05 never scored. Hand off to analysis LLM via RESULTS_INDEX.md.",
+  "credit_resume_note": "4-hour resume protocol was armed throughout; no usage-limit signal occurred, so no resume was scheduled.",
+  "updated": "2026-06-05"
+}

@@ -1,0 +1,59 @@
+{
+  "worker": "W2",
+  "milestone": "M2 defined-risk core book",
+  "results_root": "/Users/ahmade/Documents/rv_estimator/stage2_trade_eval/results/w2",
+  "grid": {
+    "models": [
+      "EnsembleTopK",
+      "HAR-X",
+      "IV-only"
+    ],
+    "structures": [
+      "iron_condor",
+      "iron_fly",
+      "put_credit_spread"
+    ],
+    "management": [
+      "hold"
+    ],
+    "hedge": [
+      "none"
+    ],
+    "horizons": [
+      22
+    ],
+    "n_cells": 9
+  },
+  "ledgers": {
+    "ledger/EnsembleTopK__h22__iron_condor__hold__none.parquet": 102,
+    "ledger/EnsembleTopK__h22__iron_fly__hold__none.parquet": 93,
+    "ledger/EnsembleTopK__h22__put_credit_spread__hold__none.parquet": 37,
+    "ledger/HAR-X__h22__iron_condor__hold__none.parquet": 91,
+    "ledger/HAR-X__h22__iron_fly__hold__none.parquet": 88,
+    "ledger/HAR-X__h22__put_credit_spread__hold__none.parquet": 47,
+    "ledger/IV-only__h22__iron_condor__hold__none.parquet": 150,
+    "ledger/IV-only__h22__iron_fly__hold__none.parquet": 143,
+    "ledger/IV-only__h22__put_credit_spread__hold__none.parquet": 52
+  },
+  "portfolios": {
+    "portfolio/EnsembleTopK__h22__iron_condor__hold__none.parquet": 51,
+    "portfolio/EnsembleTopK__h22__iron_fly__hold__none.parquet": 50,
+    "portfolio/EnsembleTopK__h22__put_credit_spread__hold__none.parquet": 24,
+    "portfolio/HAR-X__h22__iron_condor__hold__none.parquet": 51,
+    "portfolio/HAR-X__h22__iron_fly__hold__none.parquet": 50,
+    "portfolio/HAR-X__h22__put_credit_spread__hold__none.parquet": 33,
+    "portfolio/IV-only__h22__iron_condor__hold__none.parquet": 58,
+    "portfolio/IV-only__h22__iron_fly__hold__none.parquet": 58,
+    "portfolio/IV-only__h22__put_credit_spread__hold__none.parquet": 35
+  },
+  "manifest": {
+    "manifest.parquet": 9
+  },
+  "scoring": {
+    "scorecard.parquet": 9,
+    "attribution.parquet": 6,
+    "verdicts.parquet": 6,
+    "_scoring_dump.json": null
+  },
+  "n_trials_deflation": 9
+}
