@@ -13,6 +13,12 @@ polygon_parquet/
 # rv_eval evaluator: staged raw subset, derived panels, run outputs (large/regenerable)
 execution/data/
 execution/reports/
+# put-spread backtest: raw data layers rsync'd from the Ex-Disk master lakes (large, ~13GB+,
+# re-stageable per FROZEN_STRATEGY_SPEC.md §3.1). Keep README.md + market_holidays.parquet tracked.
+strategy_backtest/back-test-data/orats/
+strategy_backtest/back-test-data/minute/
+strategy_backtest/back-test-data/daily/
+strategy_backtest/back-test-data/corp_actions/
 # trade_eval Stage-1 backtest results (large/regenerable from frozen predictions)
 trade_eval/results/
 __pycache__/

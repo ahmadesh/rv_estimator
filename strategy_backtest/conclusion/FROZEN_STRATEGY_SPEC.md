@@ -60,6 +60,24 @@ Feature sources (never traded): SPX, VIX chains
   walk-forward (expanding window, monthly refits, purged + 1-day-embargoed, `MIN_TRAIN_DAYS=756`,
   `OOS_START=2010-01-01`). Inputs: 5-min realized measures (RV, semivariances, jumps, quarticity)
   from Polygon minute bars + per-ticker ORATS IV features. First prediction 2010-01-04.
+  - **What each component regresses on** (all share the Corsi-HAR backbone `log_rv_{d,w,m}` =
+    log of today's / trailing-5d / trailing-22d daily total RV; each is a plain log-OLS of
+    `log(target_var)` on its features, fit independently per (ticker, horizon), no hyperparameter,
+    no seed):
+
+    | Component | Extra features beyond the HAR backbone | Signal it adds |
+    | --- | --- | --- |
+    | **HARQ** | `sqrt_rq` (√ realized quarticity) | Down-weights `RV_{t−1}` when that day's RV was a noisy estimate (measurement-error fix) |
+    | **HAR-RS** | `rs_minus_5d, rs_plus_5d, jump_5d` (down/up semivariance + jump) | "Downside RV predicts future RV; upside/jumps largely don't" — the most put-relevant decomposition |
+    | **HAR-CJ** | `log_bv_{d,w,m}, log_jump_d` (bipower continuous part + jump) | Separates persistent smooth vol from transitory jumps |
+    | **HAR-RS-IV-Q** | HAR-RS + `sqrt_rq` + IV block (`log_iv, iv_slope, skew_25d, vix, vix3m, vix_slope, vvix`) | The only **forward-looking** member — injects the market's own IV/VIX term-structure view |
+  - **Combiner** (parameter-free; `fit()` is a no-op, no calibration layer): for each key,
+    `rv_hat = mean(component rv_hat)` in variance space and
+    `sigma = √(mean(component σ²) + var(component rv_hat))` (within-model uncertainty + between-model
+    dispersion — the term that widens the interval exactly when the four views disagree). A key needs
+    **≥2** finite-positive components or it is dropped, never imputed. `rv_hat` = point forecast of
+    forward realized variance `E[Σ_{s=t+1..t+22} RV_s]`. (Verified bit-exact vs the production guide —
+    `results/ensemble_verification.md`.)
 - **De-bias** (`pit.trailing_debias`): `rv_hat_cal = rv_hat × exp(median of matured log errors)`,
   where the expanding per-ticker median uses only forecasts whose 22-day realization has closed
   (shift 22 rows, `min_periods=126`). Corrects the forecaster's structural over-prediction
@@ -67,6 +85,21 @@ Feature sources (never traded): SPX, VIX chains
 - **Implied variance** `iv2 = iv_30d² × (22/252)` (ORATS 30-day ATM IV, de-annualized to the
   22-trading-day horizon).
 - **Score** `= log(iv2) − log(rv_hat_cal)` — log-richness of options vs forecast RV.
+- **What the forecast does / does not add.** At h=22 the forecast carries **~no per-name directional
+  mean-alpha over IV²** (incremental-skill sign-accuracy ≈ 0.52, a coin-flip — production guide §5;
+  robust, two later attacks failed). This book does **not** rely on that: it drops the production
+  gate + σ-sizing that guide anticipated (§2.3) and instead extracts the forecast's **cross-sectional**
+  skill — ranking names by richness — which is strongly significant (rank-IC ≈ +0.29, §4.3) and is not
+  replaceable by a trivial trailing-RV forecast (§4.4). Time-series directional skill ≈ 0 and
+  cross-sectional ranking skill ≫ 0 are consistent: they are different claims.
+
+**Model reference (authoritative, self-contained elsewhere):** full spec of the forecaster — the four
+components, per-(ticker,horizon) training, the combiner, the refit/walk-forward protocol, calibration,
+and why K=4 / equal-weight / not-one-big-regression — is `plan_docs/ENSEMBLETOPK_PRODUCTION_GUIDE.md`.
+Source: `candidate_models/{ensemble_top,harq,har_rs,har_cj,har_rs_iv_q}.py` on base classes in
+`rv_eval/model_contract.py`, features in `rv_eval/features.py`; self-stats card
+`candidate_models/cards/EnsembleTopK.md`. (Guide numbers quoting `OOS_START=2018` are the rv_eval eval
+sample; this backtest refits from `OOS_START=2010` per `pipeline/config.py` — see §3.2.)
 
 ### 2.3 Entry selection (weekly)
 
@@ -183,6 +216,98 @@ dependence — but **not** √N Sharpe scaling (common crash factor; edge concen
 
 ![9-name baseline](images/narrow_baseline_pnl.png)
 
+### 4.3 What the edge actually is — cross-sectional ranking (and why it isn't luck)
+
+The edge is **not** per-name variance-forecasting accuracy. It is that ranking the universe by
+`score = log(iv²) − log(rv_hat_cal)` sorts names by their *realized* IV-richness: the top-ranked
+names are the ones whose options were genuinely rich that week, and selling them harvests a real
+cross-sectional dispersion in the vol-risk-premium. This is why selection (top-2), not size-tilt or
+per-name gating, is the load-bearing operation.
+
+**Direct test of the mechanism.** For each weekly cohort (the traded set: `score > 0`, ≥7 names,
+805 cohorts 2010→2026), rank-correlate the signal against the realized payoff proxy
+`realized_richness = log(iv²) − log(target_var)` (same log units as `score`; PIT — `score` uses the
+de-biased `rv_hat_cal` exactly as traded):
+
+| quantity | value |
+| --- | --- |
+| **Rank-IC** `Spearman(score, realized_richness)` per cohort | mean **+0.246**, median +0.26, **positive in 80% of weeks**, t ≈ **25** |
+| **Top-2 selection edge** (realized richness of the 2 picked − cohort mean) | **+0.116**, positive 73% of weeks, t ≈ 13 |
+| **Permutation null** (shuffle realized-within-date, 2000 draws) | null IC = 0.000 ± 0.007 ⇒ observed **≈34σ out, p < 0.0005** |
+
+The selection captures genuine cross-sectional information; it is **not luck at the signal level**.
+(This corroborates the ~0.35 rank-IC in `XSEC_PIVOT_FINDINGS.md`, measured there on the L/S.)
+
+**Why per-name P&L is the wrong lens.** Realized P&L for any single name is dominated by how often
+it was picked, the handful of crashes it straddled, and its vol-of-vol level — mostly noise around a
+common short-vol factor (some names have <5 trades). Per-name *forecast skill* (QLIKE, log-error
+variance) therefore shows ~zero-to-negative rank-correlation with per-name P&L, and is not itself
+persistent across sub-samples. This is a property of the estimator, **not** evidence the edge is
+luck — and it is exactly why per-name screens (the trailing-P&L ban in §5, and the model-skill
+screen in §8.4) do not help: they operate at the resolution where there is only noise, while the
+edge lives in the cross-section.
+
+**Two things to keep straight.** (i) A robust *signal* edge (above) is not the same as an unbiased
+*headline Sharpe*: the 0.66/0.93 point estimates are still multiplicity-inflated (§6.1). (ii) The
+only real guarantee remains true out-of-sample — the pre-registered shadow run in §7. The
+permutation test is the *ex-ante* confidence; the shadow run is the *ex-post* proof.
+
+### 4.4 The forecaster is load-bearing — a trivial trailing-RV score is NOT a substitute
+
+A natural challenge to §4.3: if the edge is just "sell the names whose IV is rich vs their RV," does
+the HAR ensemble matter, or would a trivial RV estimate do? Ablation: re-run the **entire** frozen
+book (same universe, cadence, `score>0` gate, tradeable-walk, structure, sizing, fills, settlement)
+with the *only* change being the RV used in the score —
+
+- **model** : `score = log(iv²) − log(rv_hat_cal)`  (EnsembleTopK, de-biased — the frozen book)
+- **trail** : `score = log(iv²) − log(trailing_22d_RV)`  (sum of the past 22 daily `total_rv`, no model)
+
+| predictor | fill | trades | P&L | Sharpe | maxDD | win | 2010–13 | 2014–17 | 2018–21 | 2022–26 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| model | cross | 1525 | $1,910,752 | **0.66** | $442,801 | 85% | 0.90 | 0.30 | 0.67 | 0.78 |
+| model | mid | 1525 | $2,704,937 | **0.93** | $357,078 | 85% | 1.12 | 0.63 | 0.92 | 1.02 |
+| trail | cross | 1266 | $71,237 | **0.02** | $559,228 | 81% | 0.07 | 0.11 | **−0.18** | 0.07 |
+| trail | mid | 1434 | $1,100,275 | **0.34** | $468,589 | 82% | 0.29 | 0.71 | −0.03 | 0.43 |
+
+(The model arm reproduces the frozen headline bit-for-bit — 1525 vs 1524 trades is one boundary
+date — validating that this ablation harness is the frozen engine.)
+
+**Trailing RV yields a dead book: 0.02 cross / 0.34 mid, $71k vs the model's $1.91M — a ~27× P&L
+gap at worst-case fills.** The forecaster *is* the strategy, not a garnish.
+
+**The trap: rank-IC massively understates the model's value.** At the signal level the trivial
+predictor looks nearly as good — it captures **86%** of the model's cross-sectional rank-IC and 82%
+of its top-2 selection edge:
+
+| ranking signal (ungated, 815 weekly cohorts) | rank-IC | top-2 selection edge |
+| --- | --- | --- |
+| model `log(iv²) − log(rv_hat_cal)` | +0.289 | +0.135 |
+| trailing RV `log(iv²) − log(trail_RV)` | +0.250 (86%) | +0.111 (82%) |
+| IV-level only `log(iv²)` *(no RV predictor)* | +0.029 | +0.020 |
+| inverse-RV only `−log(trail_RV)` *(no iv²)* | +0.058 | −0.003 |
+
+Yet that 14%-IC gap is the whole difference between deployable and dead, for three reasons — the
+same reasons rank-IC (which weights all names equally) can't see:
+
+1. **The edge is in the tails / trap-avoidance.** Trailing RV over-picks structurally-high-vol names
+   (EWZ, USO, FXI, TLT) whose IV looks rich *against a trailing average* but whose forward RV is
+   genuinely high — exactly where short put-spreads get run over (trailing maxDD $559k > model
+   $443k). The de-biased model forecasts that high forward RV and deflates those scores.
+2. **It under-picks the best name.** Trailing selects QQQ 53× vs the model's 226×, forgoing the
+   single biggest earner.
+3. **It fails the regime the pivot exists for.** Trailing is *negative in 2018–21* (−0.18 cross);
+   the model is strongest post-2018. Trailing RV re-inherits the exact post-2018 death (Sharpe
+   −0.34) that killed the original always-on book (§1) — because it lacks the cross-sectional
+   forecast skill.
+
+Also note the fill-sensitivity: trailing's edge is so thin that crossing the spread eats ~94% of it
+($71k cross vs $1.10M mid), as its picks skew to lower-premium / worse-liquidity names. The two
+tables together are the cleanest statement of what this strategy is: cross-sectional VRP ranking
+(§4.3) made *tradeable* by a genuine RV forecast — and the correct KPI for that forecast is realized
+P&L in the tails, not pooled rank-IC.
+
+_Repro: `experiments/xsec_putspread_trailing.py` (runs both predictors × both fills in one process)._
+
 ## 5. Variants tested and REJECTED (do not re-litigate without new evidence)
 
 | Variant | Result | Why it fails |
@@ -194,6 +319,7 @@ dependence — but **not** √N Sharpe scaling (common crash factor; edge concen
 | Group-distinct top-K | 0.54 | doubled-up top picks were genuinely best |
 | 6-monthly worst-ticker ban (trailing 2y P&L) | 0.66/0.90, era churn | per-name performance not persistent (rank-corr +0.15, sign-flips); banned QQQ '13, SPY '20 |
 | Managed exits (profit-take/stops/term-flip) | −$129k vs +$309k hold | whipsaw; X5 stop alone −$499k |
+| Trailing-22d-RV score (replace the model forecast) | 0.02 cross / 0.34 mid, $71k P&L | trivial RV mis-prices high-vol trap names (EWZ/USO), under-picks QQQ, negative 2018–21; keeps 86% of rank-IC but ~1/27th the P&L (§4.4) |
 
 ## 6. Known caveats (read before believing the numbers)
 
