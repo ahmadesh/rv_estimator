@@ -222,3 +222,63 @@ size capture most of it); (2) a crash-factor hedge financed out of the spread ri
 small SPY put tail overlay — the one variant deliberately NOT explored here to avoid another
 in-sample fork; design it ex-ante); (3) the short-straddle sleeve blend (§5.2). The multiplicity
 debt is now substantial — freeze this spec and evaluate per §5.4 before any further tuning.
+
+---
+
+# Addendum (2026-07-09): the fixed SPY/QQQ baseline — how much of the edge is selection at all?
+
+**Question.** The frozen book's strongest possible dumb competitor is not trailing-RV ranking
+(§4.4 of the spec) but *no ranking at all*: mechanically sell the same put spread on the two most
+liquid index ETFs every week. If that ties the frozen book, the model isn't earning its keep.
+
+**Experiment** (`experiments/xsec_putspread_fixed.py`, reports
+`results/xsec_putspread_report_fixed_spyqqq{,_gated}.md`): trade SPY + QQQ on every weekly cohort
+date; everything else — cadence, date-validity gate, 0.25Δ/0.10Δ ~30 DTE structure, hold-to-expiry,
+b=0.02 flat sizing, group-margin cap, G7 fill filters, both fill assumptions — identical to the
+frozen spec. A `score>0`-gated variant was also run.
+
+## Headline
+
+| book | fill | trades | P&L | Sharpe | maxDD | 2010–13 | 2014–17 | 2018–21 | 2022–26 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| frozen top-2 | cross | 1,524 | $1.92M | **0.66** | $438k | 0.90 | 0.30 | 0.67 | 0.78 |
+| frozen top-2 | mid | 1,524 | $2.71M | **0.93** | $353k | 1.12 | 0.63 | 0.92 | 1.02 |
+| fixed SPY/QQQ | cross | 1,045 | $1.77M | **0.67** | $315k | 0.21 | 0.88 | 1.12 | 0.67 |
+| fixed SPY/QQQ | mid | 1,117 | $2.10M | **0.77** | $308k | 0.34 | 1.17 | 0.95 | 0.74 |
+| fixed, score>0-gated | cross/mid | 958/1,022 | $1.66M/$2.01M | 0.69 / 0.81 | — | — | — | — | — |
+
+**At worst-case fills the dumb baseline ties the frozen book (0.67 vs 0.66).** The model's
+headline advantage exists only at mid fills (+0.16 Sharpe, +$0.6M).
+
+## Head-to-head decomposition (monthly, same window)
+
+- **Overlap is small.** Only 30% of frozen slots are SPY/QQQ; 48% of weeks the frozen book holds
+  neither name. Monthly P&L correlation between the books: **0.60**.
+- **Residual sleeve** (frozen trades ex-SPY/QQQ, standalone): 1,074 trades, $0.99M cross / $1.72M
+  mid, Sharpe **0.44 cross / 0.75 mid**, positive in 3 of 4 eras (only 2014–17 flat). Selection
+  beyond the pair is real money, not noise.
+- **Alpha regression** (frozen on fixed): **cross $46k/yr, t = 1.28 — not significant; mid
+  $82k/yr, t = 2.27 — significant.** The reverse regression (fixed on frozen) is insignificant at
+  both fills. So the model's *incremental* edge over the pair clears conventional significance only
+  under decent execution.
+- **50/50 blend: Sharpe 0.74 at cross fills — beats both standalone books** (0.95 at mid, ≈ frozen).
+  At worst-case execution the two books are complementary carry streams, not substitutes.
+- **Era inversion.** The fixed pair is near-dead 2010–13 (0.21) and best 2018–21 (1.12); the frozen
+  book is the reverse. The model book is the more era-balanced of the two.
+
+## Read
+
+1. The honest deployment framing is **"a SPY/QQQ short-vol carry base + ~$80k/yr of
+   execution-sensitive cross-sectional alpha + diversification (corr 0.60)"** — not "the model is
+   the strategy." If live fills land at the cross bound, the model adds ~nothing to Sharpe over
+   trading the pair with zero model infrastructure.
+2. This makes **execution (§8.1 of the spec) the binding lever**, more decisively than the
+   cross→mid gap alone implied: patient fills are what convert the selection edge from
+   statistically-invisible to significant, because the alpha lives in the less-liquid picks
+   (GDX/SLV/XOP/EWZ) where crossing the spread eats exactly what the ranking finds.
+3. A "pair-core + top-K non-pair overlay" v1.1 suggests itself from the blend result, but it is
+   new tuning on the same 2010–2026 sample — it belongs in the §8 ex-ante queue, subject to the
+   same multiplicity discipline, not in this version's spec.
+4. Consistency check with §4.4: trailing-RV ranking (0.02 cross) is far *worse* than no ranking at
+   all (0.67 cross) — a bad cross-sectional signal actively walks into high-vol traps that a fixed
+   liquid-index book never touches.

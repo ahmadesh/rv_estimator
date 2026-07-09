@@ -333,6 +333,13 @@ _Repro: `experiments/xsec_putspread_trailing.py` (runs both predictors × both f
 4. **Same-day signal→fill:** entries fill at the same EOD chain that produced the signal.
 5. **Short-vol skew:** +0.42 SPY correlation; the book is long equity beta in crashes. The
    crash-factor hedge (§8) is designed-but-not-tested, deliberately.
+6. **The selection edge is execution-conditional** (fixed-baseline experiment, 2026-07-09,
+   archive addendum): a no-model "sell the same spread on SPY+QQQ every week" baseline **ties the
+   frozen book at cross fills** (0.67 vs 0.66; model alpha over it t = 1.28, insignificant) and
+   only loses at mid fills (0.77 vs 0.93; alpha $82k/yr, t = 2.27). The model's incremental alpha
+   lives in less-liquid picks and is eaten by spread-crossing — execution quality (§8.1) is what
+   makes the model worth running over the trivial pair. (Monthly corr between the books is only
+   0.60; a 50/50 blend Sharpes 0.74 at cross, beating both — see §8.6.)
 
 ## 7. Pre-registered evaluation protocol (MANDATORY before deployment)
 
@@ -361,3 +368,8 @@ _Repro: `experiments/xsec_putspread_trailing.py` (runs both predictors × both f
    screen (QLIKE / log-error variance vs IV-only baseline, ~250 obs/name/yr); designable PIT.
 5. **More breadth done right** — additional *liquid* names help capacity (not Sharpe); single-name
    options would need earnings handling the current pipeline lacks.
+6. **Pair-core + overlay blend** — the fixed SPY/QQQ baseline (caveat §6.6) is only 0.60
+   monthly-correlated with the frozen book, and a 50/50 blend beat both standalone at cross fills
+   (0.74). A v1.1 "always-on SPY/QQQ core + top-K *non-pair* overlay" is the natural design —
+   but it was observed on this same sample, so it carries fresh multiplicity debt and must be
+   specified ex-ante and evaluated under §7, not retro-fitted into this version.
