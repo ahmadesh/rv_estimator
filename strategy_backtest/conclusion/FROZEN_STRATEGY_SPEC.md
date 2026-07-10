@@ -6,6 +6,10 @@ _Frozen 2026-06-12 · repo `rv_estimator` @ d438fd8+ · python 3.12.13 / polars 
 exact reproduction steps, results, caveats, and the evaluation protocol that must run before any
 deployment decision. Any change to §2 (the spec) is a new version and resets the evaluation clock.
 
+_Addendum 2026-07-09: §4.3, §5, §6, §7 and §8 updated with the hole-digging program's measured
+numbers (`results/HOLE_DIGGING_REPORT.md`). No §2 change — v1.0 stands. The proposed v1.1 lives in
+`STRATEGY_SPEC_v1.1_DRAFT.md`._
+
 ---
 
 ## 0. One-paragraph summary
@@ -238,6 +242,16 @@ de-biased `rv_hat_cal` exactly as traded):
 The selection captures genuine cross-sectional information; it is **not luck at the signal level**.
 (This corroborates the ~0.35 rank-IC in `XSEC_PIVOT_FINDINGS.md`, measured there on the L/S.)
 
+**Two further legs (2026-07-09).** (i) *Random-pick P&L null* (`results/xsec_putspread_nullpick.md`):
+replacing the score-rank with a random permutation of each weekly gated cohort — identical gate,
+tradeable-walk, engine, sizing, cross fills — yields null Sharpe **0.16 ± 0.09**; the frozen 0.66
+sits ≈5.5 null-sd out. Selection pays in realized dollars, not just rank-IC; the §6.6 pair baseline
+ties at cross because of SPY/QQQ's *execution* advantage, a different edge. (ii) *Crash-factor
+regression* (`results/frozen_stats.md`): monthly P&L on SPY, min(SPY,0) and ΔVIX (Newey-West)
+leaves residual α **$199k/yr (t = 2.75)** — the book is short the crash factor (convexity β 0.45)
+but is not only that. (iii) *Recency*: per-year rank-IC shows no decay — trailing-2y +0.205 vs
+full-sample +0.248; 2025 = +0.299.
+
 **Why per-name P&L is the wrong lens.** Realized P&L for any single name is dominated by how often
 it was picked, the handful of crashes it straddled, and its vol-of-vol level — mostly noise around a
 common short-vol factor (some names have <5 trades). Per-name *forecast skill* (QLIKE, log-error
@@ -320,19 +334,34 @@ _Repro: `experiments/xsec_putspread_trailing.py` (runs both predictors × both f
 | 6-monthly worst-ticker ban (trailing 2y P&L) | 0.66/0.90, era churn | per-name performance not persistent (rank-corr +0.15, sign-flips); banned QQQ '13, SPY '20 |
 | Managed exits (profit-take/stops/term-flip) | −$129k vs +$309k hold | whipsaw; X5 stop alone −$499k |
 | Trailing-22d-RV score (replace the model forecast) | 0.02 cross / 0.34 mid, $71k P&L | trivial RV mis-prices high-vol trap names (EWZ/USO), under-picks QQQ, negative 2018–21; keeps 86% of rank-IC but ~1/27th the P&L (§4.4) |
+| Additive pair-core + non-pair overlay (the §8.6 idea, trade-level) | 0.44 cross / 0.67 mid | doubles gross short-vol (sleeve corr 0.47) and strips QQQ from the overlay; blend *whole* books at half size instead (0.74 cross, §6.6) — `results/xsec_putspread_v11.md` |
+| Vol-targeted sizing (EWMA book-vol on the true MTM path, lagged, mean-leverage 1) | MTM 0.55 → 0.46 daily / 0.47 monthly, maxDD +50% | the book's realized vol is lowest right *before* vol events — trailing-vol targeting levers up into the storm — `results/frozen_voltarget.md` |
+| Always-on SPY tail-put hedge; spike monetization; VIX & IV-rank entry gates | all rejected | high-VIX weeks are the book's best trades; entry gates can't close pre-spike positions; monetizing caps the convexity you paid for. ⚠ artifacts lost (never committed) — numbers survive only in the 2026-07 memory record; rebuild before re-litigating. Keeper: conditional `vix≥vix3m` hold hedge, Sharpe-neutral crash-beta reducer |
 
 ## 6. Known caveats (read before believing the numbers)
 
-1. **Multiplicity.** Structure, K=2, log-score, HYG exclusion, tradeable-walk, score>0 were chosen
-   on this same 2010–2026 sample across many explored forks (see §5 and `XSEC_PIVOT_FINDINGS.md`).
-   The true expectation is below the point estimates. This is the main reason for §7.
-2. **Realization-dated P&L.** The daily series books P&L at exit; intra-trade MTM swings are not
-   in the Sharpe/maxDD. (The rejected straddle sleeve numbers WERE true MTM; this book's are not.)
+1. **Multiplicity — now quantified** (2026-07-09, `results/frozen_stats.md`). Structure, K=2,
+   log-score, HYG exclusion, tradeable-walk, score>0 were chosen on this same 2010–2026 sample
+   across many explored forks (see §5 and `XSEC_PIVOT_FINDINGS.md`). Stationary-bootstrap 90% CI
+   on the cross 0.66 is **[0.22, 1.15]**; **deflated Sharpe = 0.59** against the 18 documented
+   tried variants (0.45 under an N=40 undocumented-forks scenario). The true expectation is below
+   the point estimates. This is the main reason for §7.
+2. **Realization-dated P&L — now measured** (2026-07-09, `results/frozen_mtm.md`). The daily
+   series books P&L at exit; re-marked daily at chain mids the true MTM path Sharpes **0.55**
+   cross (vs 0.66) with daily-path maxDD **$502k** and worst MTM month 2019-05 −$264k (a vol
+   chop, not a crash). Read the §7 pass criteria against 0.55, not 0.66. (The rejected straddle
+   sleeve numbers WERE true MTM.)
 3. **Fill bounds.** Cross = worst case, mid = best case; live sits in between (~0.80 expected).
    The mid bound assumes current clip sizes (~112 contracts median) — it degrades at ≥3× size.
-4. **Same-day signal→fill:** entries fill at the same EOD chain that produced the signal.
-5. **Short-vol skew:** +0.42 SPY correlation; the book is long equity beta in crashes. The
-   crash-factor hedge (§8) is designed-but-not-tested, deliberately.
+4. **Same-day signal→fill — now resolved** (2026-07-09, `results/xsec_putspread_report_lag1*.md`):
+   entries fill at the same EOD chain that produced the signal, but lagging the signal one trading
+   day (T+1-executable) keeps **0.54 cross / 0.80 mid**. Lagging either score component alone ≈
+   lagging both, and mid degrades no more than cross ⇒ the ~0.12 gap is timing sensitivity of the
+   top-2 boundary, not quote-noise harvesting. Not a fatal artifact; budget for it if live orders
+   can't be worked at the signal close.
+5. **Short-vol skew:** +0.42 SPY correlation; the book is long equity beta in crashes
+   (crash-convexity β 0.45 in the §4.3 factor regression). The crash-factor hedge lever is now
+   closed (§8.2): the conditional `vix≥vix3m` hold hedge is the one Sharpe-neutral keeper.
 6. **The selection edge is execution-conditional** (fixed-baseline experiment, 2026-07-09,
    archive addendum): a no-model "sell the same spread on SPY+QQQ every week" baseline **ties the
    frozen book at cross fills** (0.67 vs 0.66; model alpha over it t = 1.28, insignificant) and
@@ -340,12 +369,25 @@ _Repro: `experiments/xsec_putspread_trailing.py` (runs both predictors × both f
    lives in less-liquid picks and is eaten by spread-crossing — execution quality (§8.1) is what
    makes the model worth running over the trivial pair. (Monthly corr between the books is only
    0.60; a 50/50 blend Sharpes 0.74 at cross, beating both — see §8.6.)
+7. **Capacity** (2026-07-09, `results/frozen_forensics.md`): **31% of trades are larger than the
+   worse leg's resting open interest** (wing p95 9.7×, p99 23.6×), and that slice nets −3% of book
+   P&L; 80% of P&L sits below 0.25× OI. Both fill bounds are fiction for the oversized slice at
+   the booked contract counts. The profitable core is deliverable; the booked size is not. (The
+   OI-cap sizing rule that fixes this — and *improves* the book — is the headline §2 change of
+   the v1.1 draft.)
+8. **Settlement-model limits** (2026-07-09, `results/frozen_forensics.md`): 8.3% of trades settle
+   within ±1% of the short strike (pin/assignment zone); early assignment is unmodeled on the 102
+   breached trades in distribution-paying ETFs; corporate-action strikes are taken as listed (the
+   USO Apr-2020 1:8 reverse split is mishandled on one trade, immaterial).
 
 ## 7. Pre-registered evaluation protocol (MANDATORY before deployment)
 
 1. **No further tuning.** Any spec change ⇒ version bump, evaluation restarts.
 2. **Paper-trade / shadow-run** the frozen spec live for ≥2 quarters (~26 weekly cohorts):
-   record actual fills vs the cross/mid bounds, MTM daily P&L, margin usage.
+   record actual fills vs the cross/mid bounds, MTM daily P&L, margin usage — plus (added
+   2026-07-09) per-trade **realized fill-λ** (fill = mid + λ·half-spread; the model only earns its
+   complexity over the SPY/QQQ pair if λ < 1 — §8.1) and **contracts/OI per leg at entry**
+   (audits caveat §6.7).
 3. **Pass criteria (set now):** realized monthly Sharpe of the shadow book > 0.4 (the bottom of
    the honest expectation band); realized fill quality ≤ 40% of half-spread; no maxDD > 15% of
    deployed margin beyond what the same weeks' backtest shows.
@@ -355,21 +397,29 @@ _Repro: `experiments/xsec_putspread_trailing.py` (runs both predictors × both f
 5. **Size at start:** b = 0.02 ($40k/trade at $2M). Raise toward 2× only after the §7.2 evaluation
    passes; never past the liquidity ceiling (§2.6).
 
-## 8. Open improvement levers (next version, ex-ante designs only)
+## 8. Open improvement levers (statuses updated 2026-07-09 — see `results/HOLE_DIGGING_REPORT.md`)
 
-1. **Execution** — the cross→mid gap is worth +0.27 Sharpe; patient limit orders at ~100-contract
-   clips on liquid ETF options should capture ≥half.
-2. **Crash-factor hedge** — finance a small SPY tail put overlay out of the spread richness;
-   design the rule before looking at this sample's P&L (the one variant deliberately left untested
-   to keep it honest).
-3. **Second sleeve** — the short-only straddle book (0.70 daily-MTM Sharpe, different P&L path)
-   blended at vol weights; requires re-marking this book MTM first for covariance.
-4. **Model-skill name screen** — replace the rejected P&L-ban with a trailing forecast-quality
-   screen (QLIKE / log-error variance vs IV-only baseline, ~250 obs/name/yr); designable PIT.
-5. **More breadth done right** — additional *liquid* names help capacity (not Sharpe); single-name
-   options would need earnings handling the current pipeline lacks.
-6. **Pair-core + overlay blend** — the fixed SPY/QQQ baseline (caveat §6.6) is only 0.60
-   monthly-correlated with the frozen book, and a 50/50 blend beat both standalone at cross fills
-   (0.74). A v1.1 "always-on SPY/QQQ core + top-K *non-pair* overlay" is the natural design —
-   but it was observed on this same sample, so it carries fresh multiplicity debt and must be
-   specified ex-ante and evaluated under §7, not retro-fitted into this version.
+1. **Execution — QUANTIFIED** (`results/xsec_putspread_lambda.md`): the model beats the SPY/QQQ
+   pair at every fill quality, but its alpha decays $37k/yr (IR 0.24) at mid → $9k/yr (IR 0.06)
+   at full crossing. **Breakeven ≈ λ = 1**: any capture below full-spread crossing is what pays
+   for running the model. Now a recorded §7 shadow-run metric, not an open design.
+2. **Crash-factor hedge — CLOSED** (2026-07 program, memory record; artifacts lost, rebuild
+   before re-litigating): always-on and spike-monetization rejected; the keeper is the
+   conditional `vix≥vix3m · φ=0.20 · 0.10Δ/30` hold hedge — Sharpe-neutral, halves the fast-crash
+   tail, NOT a maxDD fix (the binding drawdown is the 2014–16 low-vol grind).
+3. **Second sleeve** — still open; its prerequisite now exists (this book's daily MTM:
+   `results/frozen_mtm_daily.csv`, Sharpe 0.55 basis for covariance work).
+4. **Model-skill name screen** — still open, designable PIT; §4.3's own logic (per-name
+   resolution is noise) predicts it fails.
+5. **More breadth done right** — still open (capacity, not Sharpe); single-name options would
+   need earnings handling the current pipeline lacks.
+6. **Pair-core + overlay blend — additive form REJECTED** (0.44 cross / 0.67 mid,
+   `results/xsec_putspread_v11.md`): trade-level sleeves double gross short-vol and strip QQQ
+   from the overlay. What survives is the *capital-allocation* blend — both whole books at half
+   size (0.74 cross, §6.6) — which needs no spec change.
+7. **OI-capped sizing — NEW, the v1.1 headline** (`results/xsec_putspread_oicap.md`): contracts ≤
+   0.25×min(leg OI) ⇒ 0.89 cross / 1.06 mid with maxDD halved; closes caveat §6.7 and improves
+   every measured axis. Specified ex-ante in `STRATEGY_SPEC_v1.1_DRAFT.md`.
+8. **DTE 45 — hypothesis with multiplicity debt** (`results/xsec_putspread_plateau.md`): 0.83
+   cross / 1.03 mid vs frozen 0.66/0.93; mechanism-consistent (expiry ≥ h=22 horizon; 21-DTE
+   craters to 0.21). Born from a 9-cell sweep on this sample — only a shadow run can promote it.
